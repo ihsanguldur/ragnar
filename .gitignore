@@ -1,0 +1,20 @@
+/bin/
+*.exe
+*.test
+
+go.work
+go.work.sum
+
+.idea/
+.vscode/
+.DS_Store
+
+# env (only .env.example is committed)
+.env
+.env.*
+!.env.example
+
+# uploaded documents and local runtime data
+/data/
+
+*.log
