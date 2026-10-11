@@ -1,0 +1,13 @@
+http:
+  addr: ":8080"
+
+ollama:
+  url: http://localhost:11434
+  chat_model: qwen3:8b
+  embed_model: bge-m3
+
+chat:
+  timeout: 60s
+  max_tokens: 1024
+  temperature: 0.2
+  system_prompt: "You are a helpful assistant. Answer briefly, in the language of the question."
