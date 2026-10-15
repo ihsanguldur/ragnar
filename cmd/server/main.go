@@ -13,6 +13,7 @@ import (
 	"github.com/ihsanguldur/ragnar/internal/api"
 	"github.com/ihsanguldur/ragnar/internal/config"
 	"github.com/ihsanguldur/ragnar/internal/llm"
+	"github.com/ihsanguldur/ragnar/internal/store"
 )
 
 func main() {
@@ -28,14 +29,24 @@ func run() error {
 		return err
 	}
 
-	provider := llm.NewOllama(cfg.Ollama.URL, cfg.Ollama.ChatModel)
-
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
+	st, err := store.Open(ctx, cfg.Database.URL)
+	if err != nil {
+		return err
+	}
+	defer st.Close()
+
+	if err := os.MkdirAll(cfg.Ingest.UploadDir, 0o755); err != nil {
+		return err
+	}
+
+	provider := llm.NewOllama(cfg.Ollama.URL, cfg.Ollama.ChatModel)
+
 	srv := &http.Server{
 		Addr:              cfg.HTTP.Addr,
-		Handler:           api.NewRouter(api.NewHandler(provider, cfg.Chat)),
+		Handler:           api.NewRouter(api.NewHandler(provider, st, cfg.Chat, cfg.Ingest)),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 

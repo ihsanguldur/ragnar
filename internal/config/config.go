@@ -10,9 +10,11 @@ import (
 )
 
 type Config struct {
-	HTTP   HTTPConfig   `mapstructure:"http"`
-	Ollama OllamaConfig `mapstructure:"ollama"`
-	Chat   ChatConfig   `mapstructure:"chat"`
+	HTTP     HTTPConfig     `mapstructure:"http"`
+	Ollama   OllamaConfig   `mapstructure:"ollama"`
+	Database DatabaseConfig `mapstructure:"database"`
+	Ingest   IngestConfig   `mapstructure:"ingest"`
+	Chat     ChatConfig     `mapstructure:"chat"`
 }
 
 type HTTPConfig struct {
@@ -23,6 +25,15 @@ type OllamaConfig struct {
 	URL        string `mapstructure:"url"`
 	ChatModel  string `mapstructure:"chat_model"`
 	EmbedModel string `mapstructure:"embed_model"`
+}
+
+type DatabaseConfig struct {
+	URL string `mapstructure:"url"`
+}
+
+type IngestConfig struct {
+	UploadDir   string `mapstructure:"upload_dir"`
+	MaxUploadMB int64  `mapstructure:"max_upload_mb"`
 }
 
 type ChatConfig struct {
@@ -68,6 +79,15 @@ func (c Config) validate() error {
 	}
 	if c.Ollama.EmbedModel == "" {
 		return errors.New("config: ollama.embed_model is required")
+	}
+	if c.Database.URL == "" {
+		return errors.New("config: database.url is required")
+	}
+	if c.Ingest.UploadDir == "" {
+		return errors.New("config: ingest.upload_dir is required")
+	}
+	if c.Ingest.MaxUploadMB <= 0 {
+		return errors.New("config: ingest.max_upload_mb must be positive")
 	}
 	if c.Chat.Timeout <= 0 {
 		return errors.New("config: chat.timeout must be positive")
