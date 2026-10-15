@@ -6,6 +6,13 @@ ollama:
   chat_model: qwen3:8b
   embed_model: bge-m3
 
+database:
+  url: postgres://ragnar:ragnar@localhost:5434/ragnar?sslmode=disable
+
+ingest:
+  upload_dir: data/uploads
+  max_upload_mb: 50
+
 chat:
   timeout: 60s
   max_tokens: 1024
