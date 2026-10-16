@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ihsanguldur/ragnar/internal/extract"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type Document struct {
@@ -61,4 +63,121 @@ func (s *Store) CreateDocument(ctx context.Context, filename, sha256 string, siz
 		return Document{}, false, fmt.Errorf("store: get document by sha256: %w", err)
 	}
 	return doc, false, nil
+}
+
+func (s *Store) ClaimDocument(ctx context.Context) (doc Document, found bool, err error) {
+	doc, err = scanDocument(s.pool.QueryRow(ctx, `
+		UPDATE documents
+		SET status = 'processing', updated_at = now()
+		WHERE id = (
+			SELECT id FROM documents
+			WHERE status = 'pending'
+			ORDER BY created_at
+			LIMIT 1
+			FOR UPDATE SKIP LOCKED
+		)
+		RETURNING `+documentColumns,
+	))
+	if errors.Is(err, pgx.ErrNoRows) {
+		return Document{}, false, nil
+	}
+	if err != nil {
+		return Document{}, false, fmt.Errorf("store: claim document: %w", err)
+	}
+	return doc, true, nil
+}
+
+func (s *Store) CompleteDocument(ctx context.Context, id string, pages []extract.Page) error {
+	tx, err := s.pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("store: begin: %w", err)
+	}
+	defer tx.Rollback(ctx)
+
+	for _, p := range pages {
+		_, err := tx.Exec(ctx,
+			`INSERT INTO pages (document_id, page_number, content) VALUES ($1, $2, $3)`,
+			id, p.Number, p.Text,
+		)
+		if err != nil {
+			return fmt.Errorf("store: insert page %d: %w", p.Number, err)
+		}
+	}
+
+	_, err = tx.Exec(ctx, `
+		UPDATE documents
+		SET status = 'ready', page_count = $2, error = NULL, updated_at = now()
+		WHERE id = $1`,
+		id, len(pages),
+	)
+	if err != nil {
+		return fmt.Errorf("store: mark ready: %w", err)
+	}
+
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("store: commit: %w", err)
+	}
+	return nil
+}
+
+func (s *Store) FailDocument(ctx context.Context, id, reason string) error {
+	_, err := s.pool.Exec(ctx, `
+		UPDATE documents
+		SET status = 'failed', error = $2, updated_at = now()
+		WHERE id = $1`,
+		id, reason,
+	)
+	if err != nil {
+		return fmt.Errorf("store: mark failed: %w", err)
+	}
+	return nil
+}
+
+func (s *Store) RequeueProcessing(ctx context.Context) (int64, error) {
+	tag, err := s.pool.Exec(ctx, `
+		UPDATE documents
+		SET status = 'pending', updated_at = now()
+		WHERE status = 'processing'`,
+	)
+	if err != nil {
+		return 0, fmt.Errorf("store: requeue processing: %w", err)
+	}
+	return tag.RowsAffected(), nil
+}
+
+func (s *Store) ListDocuments(ctx context.Context) ([]Document, error) {
+	rows, err := s.pool.Query(ctx,
+		`SELECT `+documentColumns+` FROM documents ORDER BY created_at DESC`,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("store: list documents: %w", err)
+	}
+	defer rows.Close()
+
+	var docs []Document
+	for rows.Next() {
+		d, err := scanDocument(rows)
+		if err != nil {
+			return nil, fmt.Errorf("store: scan document: %w", err)
+		}
+		docs = append(docs, d)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("store: list documents: %w", err)
+	}
+	return docs, nil
+}
+
+func (s *Store) GetDocument(ctx context.Context, id string) (doc Document, found bool, err error) {
+	doc, err = scanDocument(s.pool.QueryRow(ctx,
+		`SELECT `+documentColumns+` FROM documents WHERE id = $1`, id,
+	))
+	var pgErr *pgconn.PgError
+	if errors.Is(err, pgx.ErrNoRows) || (errors.As(err, &pgErr) && pgErr.Code == "22P02") {
+		return Document{}, false, nil
+	}
+	if err != nil {
+		return Document{}, false, fmt.Errorf("store: get document: %w", err)
+	}
+	return doc, true, nil
 }

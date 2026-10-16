@@ -12,6 +12,9 @@ database:
 ingest:
   upload_dir: data/uploads
   max_upload_mb: 50
+  workers: 2
+  poll_interval: 2s
+  extract_timeout: 2m
 
 chat:
   timeout: 60s

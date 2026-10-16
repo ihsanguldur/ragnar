@@ -7,11 +7,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
 	"github.com/ihsanguldur/ragnar/internal/api"
 	"github.com/ihsanguldur/ragnar/internal/config"
+	"github.com/ihsanguldur/ragnar/internal/extract"
+	"github.com/ihsanguldur/ragnar/internal/ingest"
 	"github.com/ihsanguldur/ragnar/internal/llm"
 	"github.com/ihsanguldur/ragnar/internal/store"
 )
@@ -40,6 +43,25 @@ func run() error {
 
 	if err := os.MkdirAll(cfg.Ingest.UploadDir, 0o755); err != nil {
 		return err
+	}
+
+	n, err := st.RequeueProcessing(ctx)
+	if err != nil {
+		return err
+	}
+	if n > 0 {
+		slog.Info("requeued interrupted documents", "count", n)
+	}
+	workerCtx, stopWorkers := context.WithCancel(ctx)
+	var wg sync.WaitGroup
+	defer func() {
+		stopWorkers()
+		wg.Wait()
+	}()
+
+	worker := ingest.NewWorker(st, extract.NewPDFToText(), cfg.Ingest)
+	for range cfg.Ingest.Workers {
+		wg.Go(func() { worker.Run(workerCtx) })
 	}
 
 	provider := llm.NewOllama(cfg.Ollama.URL, cfg.Ollama.ChatModel)

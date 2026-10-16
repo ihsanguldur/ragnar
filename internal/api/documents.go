@@ -113,3 +113,32 @@ func saveUpload(dir string, src io.Reader) (sum string, size int64, err error) {
 	}
 	return sum, size, nil
 }
+
+func (h *Handler) ListDocuments(w http.ResponseWriter, r *http.Request) {
+	docs, err := h.store.ListDocuments(r.Context())
+	if err != nil {
+		slog.Error("list documents failed", "error", err)
+		writeError(w, http.StatusInternalServerError, "could not list documents")
+		return
+	}
+
+	resp := make([]DocumentResponse, 0, len(docs))
+	for _, d := range docs {
+		resp = append(resp, newDocumentResponse(d))
+	}
+	writeJSON(w, http.StatusOK, resp)
+}
+
+func (h *Handler) GetDocument(w http.ResponseWriter, r *http.Request) {
+	doc, found, err := h.store.GetDocument(r.Context(), r.PathValue("id"))
+	if err != nil {
+		slog.Error("get document failed", "error", err)
+		writeError(w, http.StatusInternalServerError, "could not get document")
+		return
+	}
+	if !found {
+		writeError(w, http.StatusNotFound, "document not found")
+		return
+	}
+	writeJSON(w, http.StatusOK, newDocumentResponse(doc))
+}
