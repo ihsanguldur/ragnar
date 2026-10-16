@@ -32,8 +32,11 @@ type DatabaseConfig struct {
 }
 
 type IngestConfig struct {
-	UploadDir   string `mapstructure:"upload_dir"`
-	MaxUploadMB int64  `mapstructure:"max_upload_mb"`
+	UploadDir      string        `mapstructure:"upload_dir"`
+	MaxUploadMB    int64         `mapstructure:"max_upload_mb"`
+	Workers        int           `mapstructure:"workers"`
+	PollInterval   time.Duration `mapstructure:"poll_interval"`
+	ExtractTimeout time.Duration `mapstructure:"extract_timeout"`
 }
 
 type ChatConfig struct {
@@ -88,6 +91,15 @@ func (c Config) validate() error {
 	}
 	if c.Ingest.MaxUploadMB <= 0 {
 		return errors.New("config: ingest.max_upload_mb must be positive")
+	}
+	if c.Ingest.Workers <= 0 {
+		return errors.New("config: ingest.workers must be positive")
+	}
+	if c.Ingest.PollInterval <= 0 {
+		return errors.New("config: ingest.poll_interval must be positive")
+	}
+	if c.Ingest.ExtractTimeout <= 0 {
+		return errors.New("config: ingest.extract_timeout must be positive")
 	}
 	if c.Chat.Timeout <= 0 {
 		return errors.New("config: chat.timeout must be positive")
