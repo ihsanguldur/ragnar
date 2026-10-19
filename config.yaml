@@ -15,9 +15,19 @@ ingest:
   workers: 2
   poll_interval: 2s
   extract_timeout: 2m
+  chunk_size: 1600
+  chunk_overlap: 200
+  embed_batch_size: 16
+  embed_timeout: 1m
+  max_attempts: 5
+  retry_backoff: 30s
 
 chat:
   timeout: 60s
   max_tokens: 1024
   temperature: 0.2
   system_prompt: "You are a helpful assistant. Answer briefly, in the language of the question."
+
+search:
+  top_k: 5
+  timeout: 10s

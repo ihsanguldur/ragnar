@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ihsanguldur/ragnar/internal/chunk"
 	"github.com/ihsanguldur/ragnar/internal/extract"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/pgvector/pgvector-go"
 )
 
 type Document struct {
@@ -19,11 +21,12 @@ type Document struct {
 	Status    string
 	Error     *string
 	PageCount *int
+	Attempts  int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-const documentColumns = `id, filename, sha256, size_bytes, status, error, page_count, created_at, updated_at`
+const documentColumns = `id, filename, sha256, size_bytes, status, error, page_count, attempts, created_at, updated_at`
 
 func scanDocument(row pgx.Row) (Document, error) {
 	var d Document
@@ -35,6 +38,7 @@ func scanDocument(row pgx.Row) (Document, error) {
 		&d.Status,
 		&d.Error,
 		&d.PageCount,
+		&d.Attempts,
 		&d.CreatedAt,
 		&d.UpdatedAt,
 	)
@@ -71,7 +75,7 @@ func (s *Store) ClaimDocument(ctx context.Context) (doc Document, found bool, er
 		SET status = 'processing', updated_at = now()
 		WHERE id = (
 			SELECT id FROM documents
-			WHERE status = 'pending'
+			WHERE status = 'pending' AND next_attempt_at <= now()
 			ORDER BY created_at
 			LIMIT 1
 			FOR UPDATE SKIP LOCKED
@@ -87,7 +91,7 @@ func (s *Store) ClaimDocument(ctx context.Context) (doc Document, found bool, er
 	return doc, true, nil
 }
 
-func (s *Store) CompleteDocument(ctx context.Context, id string, pages []extract.Page) error {
+func (s *Store) CompleteDocument(ctx context.Context, id string, pages []extract.Page, chunks []chunk.Chunk, vectors [][]float32, model string) error {
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("store: begin: %w", err)
@@ -102,6 +106,18 @@ func (s *Store) CompleteDocument(ctx context.Context, id string, pages []extract
 		if err != nil {
 			return fmt.Errorf("store: insert page %d: %w", p.Number, err)
 		}
+	}
+
+	_, err = tx.CopyFrom(ctx,
+		pgx.Identifier{"chunks"},
+		[]string{"document_id", "chunk_index", "page_start", "page_end", "content", "embedding", "embedding_model"},
+		pgx.CopyFromSlice(len(chunks), func(i int) ([]any, error) {
+			c := chunks[i]
+			return []any{id, c.Index, c.PageStart, c.PageEnd, c.Content, pgvector.NewVector(vectors[i]), model}, nil
+		}),
+	)
+	if err != nil {
+		return fmt.Errorf("store: insert chunks: %w", err)
 	}
 
 	_, err = tx.Exec(ctx, `
@@ -123,12 +139,25 @@ func (s *Store) CompleteDocument(ctx context.Context, id string, pages []extract
 func (s *Store) FailDocument(ctx context.Context, id, reason string) error {
 	_, err := s.pool.Exec(ctx, `
 		UPDATE documents
-		SET status = 'failed', error = $2, updated_at = now()
+		SET status = 'failed', error = $2, attempts = attempts + 1, updated_at = now()
 		WHERE id = $1`,
 		id, reason,
 	)
 	if err != nil {
 		return fmt.Errorf("store: mark failed: %w", err)
+	}
+	return nil
+}
+
+func (s *Store) RetryDocument(ctx context.Context, id, reason string, delay time.Duration) error {
+	_, err := s.pool.Exec(ctx, `
+		UPDATE documents
+		SET status = 'pending', error = $2, attempts = attempts + 1, next_attempt_at = now() + $3, updated_at = now()
+		WHERE id = $1`,
+		id, reason, delay,
+	)
+	if err != nil {
+		return fmt.Errorf("store: schedule retry: %w", err)
 	}
 	return nil
 }

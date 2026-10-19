@@ -15,6 +15,7 @@ type Config struct {
 	Database DatabaseConfig `mapstructure:"database"`
 	Ingest   IngestConfig   `mapstructure:"ingest"`
 	Chat     ChatConfig     `mapstructure:"chat"`
+	Search   SearchConfig   `mapstructure:"search"`
 }
 
 type HTTPConfig struct {
@@ -37,6 +38,12 @@ type IngestConfig struct {
 	Workers        int           `mapstructure:"workers"`
 	PollInterval   time.Duration `mapstructure:"poll_interval"`
 	ExtractTimeout time.Duration `mapstructure:"extract_timeout"`
+	ChunkSize      int           `mapstructure:"chunk_size"`
+	ChunkOverlap   int           `mapstructure:"chunk_overlap"`
+	EmbedBatchSize int           `mapstructure:"embed_batch_size"`
+	EmbedTimeout   time.Duration `mapstructure:"embed_timeout"`
+	MaxAttempts    int           `mapstructure:"max_attempts"`
+	RetryBackoff   time.Duration `mapstructure:"retry_backoff"`
 }
 
 type ChatConfig struct {
@@ -44,6 +51,11 @@ type ChatConfig struct {
 	MaxTokens    int           `mapstructure:"max_tokens"`
 	Temperature  float64       `mapstructure:"temperature"`
 	SystemPrompt string        `mapstructure:"system_prompt"`
+}
+
+type SearchConfig struct {
+	TopK    int           `mapstructure:"top_k"`
+	Timeout time.Duration `mapstructure:"timeout"`
 }
 
 func Load(path string) (Config, error) {
@@ -101,6 +113,24 @@ func (c Config) validate() error {
 	if c.Ingest.ExtractTimeout <= 0 {
 		return errors.New("config: ingest.extract_timeout must be positive")
 	}
+	if c.Ingest.ChunkSize <= 0 {
+		return errors.New("config: ingest.chunk_size must be positive")
+	}
+	if c.Ingest.ChunkOverlap < 0 || c.Ingest.ChunkOverlap >= c.Ingest.ChunkSize {
+		return errors.New("config: ingest.chunk_overlap must be non-negative and smaller than ingest.chunk_size")
+	}
+	if c.Ingest.EmbedBatchSize <= 0 {
+		return errors.New("config: ingest.embed_batch_size must be positive")
+	}
+	if c.Ingest.EmbedTimeout <= 0 {
+		return errors.New("config: ingest.embed_timeout must be positive")
+	}
+	if c.Ingest.MaxAttempts <= 0 {
+		return errors.New("config: ingest.max_attempts must be positive")
+	}
+	if c.Ingest.RetryBackoff <= 0 {
+		return errors.New("config: ingest.retry_backoff must be positive")
+	}
 	if c.Chat.Timeout <= 0 {
 		return errors.New("config: chat.timeout must be positive")
 	}
@@ -109,6 +139,12 @@ func (c Config) validate() error {
 	}
 	if c.Chat.SystemPrompt == "" {
 		return errors.New("config: chat.system_prompt is required")
+	}
+	if c.Search.TopK <= 0 {
+		return errors.New("config: search.top_k must be positive")
+	}
+	if c.Search.Timeout <= 0 {
+		return errors.New("config: search.timeout must be positive")
 	}
 	return nil
 }

@@ -23,6 +23,7 @@ type DocumentResponse struct {
 	Status    string    `json:"status"`
 	Error     *string   `json:"error,omitempty"`
 	PageCount *int      `json:"page_count,omitempty"`
+	Attempts  int       `json:"attempts"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -36,6 +37,7 @@ func newDocumentResponse(d store.Document) DocumentResponse {
 		Status:    d.Status,
 		Error:     d.Error,
 		PageCount: d.PageCount,
+		Attempts:  d.Attempts,
 		CreatedAt: d.CreatedAt,
 		UpdatedAt: d.UpdatedAt,
 	}

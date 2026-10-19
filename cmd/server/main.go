@@ -13,6 +13,7 @@ import (
 
 	"github.com/ihsanguldur/ragnar/internal/api"
 	"github.com/ihsanguldur/ragnar/internal/config"
+	"github.com/ihsanguldur/ragnar/internal/embed"
 	"github.com/ihsanguldur/ragnar/internal/extract"
 	"github.com/ihsanguldur/ragnar/internal/ingest"
 	"github.com/ihsanguldur/ragnar/internal/llm"
@@ -59,7 +60,8 @@ func run() error {
 		wg.Wait()
 	}()
 
-	worker := ingest.NewWorker(st, extract.NewPDFToText(), cfg.Ingest)
+	embedder := embed.NewOllama(cfg.Ollama.URL, cfg.Ollama.EmbedModel)
+	worker := ingest.NewWorker(st, extract.NewPDFToText(), embedder, cfg.Ingest)
 	for range cfg.Ingest.Workers {
 		wg.Go(func() { worker.Run(workerCtx) })
 	}
@@ -68,7 +70,7 @@ func run() error {
 
 	srv := &http.Server{
 		Addr:              cfg.HTTP.Addr,
-		Handler:           api.NewRouter(api.NewHandler(provider, st, cfg.Chat, cfg.Ingest)),
+		Handler:           api.NewRouter(api.NewHandler(provider, embedder, st, cfg.Chat, cfg.Ingest, cfg.Search)),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
