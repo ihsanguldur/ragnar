@@ -14,13 +14,15 @@ import (
 type Ollama struct {
 	baseURL string
 	model   string
+	numCtx  int
 	client  *http.Client
 }
 
-func NewOllama(baseURL, model string) *Ollama {
+func NewOllama(baseURL, model string, numCtx int) *Ollama {
 	return &Ollama{
 		baseURL: baseURL,
 		model:   model,
+		numCtx:  numCtx,
 		client:  &http.Client{},
 	}
 }
@@ -36,6 +38,7 @@ type ollamaChatRequest struct {
 type ollamaOptions struct {
 	Temperature float64 `json:"temperature"`
 	NumPredict  int     `json:"num_predict,omitempty"`
+	NumCtx      int     `json:"num_ctx,omitempty"`
 }
 
 type ollamaChatResponse struct {
@@ -119,6 +122,7 @@ func (o *Ollama) send(ctx context.Context, req ChatRequest, stream bool) (*http.
 		Options: ollamaOptions{
 			Temperature: req.Temperature,
 			NumPredict:  req.MaxTokens,
+			NumCtx:      o.numCtx,
 		},
 	})
 	if err != nil {

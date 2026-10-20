@@ -26,6 +26,7 @@ type OllamaConfig struct {
 	URL        string `mapstructure:"url"`
 	ChatModel  string `mapstructure:"chat_model"`
 	EmbedModel string `mapstructure:"embed_model"`
+	NumCtx     int    `mapstructure:"num_ctx"`
 }
 
 type DatabaseConfig struct {
@@ -94,6 +95,9 @@ func (c Config) validate() error {
 	}
 	if c.Ollama.EmbedModel == "" {
 		return errors.New("config: ollama.embed_model is required")
+	}
+	if c.Ollama.NumCtx <= 0 {
+		return errors.New("config: ollama.num_ctx must be positive")
 	}
 	if c.Database.URL == "" {
 		return errors.New("config: database.url is required")
