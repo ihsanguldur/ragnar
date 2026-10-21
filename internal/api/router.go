@@ -20,6 +20,7 @@ func NewRouter(h *Handler) http.Handler {
 	r.Get("/documents", h.ListDocuments)
 	r.Get("/documents/{id}", h.GetDocument)
 	r.Get("/search", h.Search)
+	r.Post("/ask", h.Ask)
 
 	return r
 }

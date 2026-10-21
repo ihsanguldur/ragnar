@@ -2,9 +2,12 @@ package api
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"strings"
+
+	"github.com/ihsanguldur/ragnar/internal/retrieval"
 )
 
 type SearchResult struct {
@@ -32,16 +35,13 @@ func (h *Handler) Search(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), h.search.Timeout)
 	defer cancel()
 
-	vectors, err := h.embedder.Embed(ctx, []string{q})
-	if err != nil {
-		slog.Error("embed query failed", "error", err)
-		writeError(w, http.StatusBadGateway, "embedding request failed")
-		return
-	}
-
-	matches, err := h.store.SearchChunks(ctx, vectors[0], h.embedder.Model(), h.search.TopK)
+	matches, err := h.retriever.Retrieve(ctx, q)
 	if err != nil {
 		slog.Error("search failed", "error", err)
+		if errors.Is(err, retrieval.ErrEmbed) {
+			writeError(w, http.StatusBadGateway, "embedding request failed")
+			return
+		}
 		writeError(w, http.StatusInternalServerError, "search failed")
 		return
 	}

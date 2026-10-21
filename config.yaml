@@ -5,6 +5,7 @@ ollama:
   url: http://localhost:11434
   chat_model: qwen3:8b
   embed_model: bge-m3
+  num_ctx: 6144
 
 database:
   url: postgres://ragnar:ragnar@localhost:5434/ragnar?sslmode=disable

@@ -17,6 +17,8 @@ import (
 	"github.com/ihsanguldur/ragnar/internal/extract"
 	"github.com/ihsanguldur/ragnar/internal/ingest"
 	"github.com/ihsanguldur/ragnar/internal/llm"
+	"github.com/ihsanguldur/ragnar/internal/rag"
+	"github.com/ihsanguldur/ragnar/internal/retrieval"
 	"github.com/ihsanguldur/ragnar/internal/store"
 )
 
@@ -66,11 +68,15 @@ func run() error {
 		wg.Go(func() { worker.Run(workerCtx) })
 	}
 
-	provider := llm.NewOllama(cfg.Ollama.URL, cfg.Ollama.ChatModel)
+	retriever := retrieval.New(embedder, st, cfg.Search.TopK)
+
+	provider := llm.NewOllama(cfg.Ollama.URL, cfg.Ollama.ChatModel, cfg.Ollama.NumCtx)
+
+	ragService := rag.NewService(retriever, provider, cfg.Chat.Temperature, cfg.Chat.MaxTokens)
 
 	srv := &http.Server{
 		Addr:              cfg.HTTP.Addr,
-		Handler:           api.NewRouter(api.NewHandler(provider, embedder, st, cfg.Chat, cfg.Ingest, cfg.Search)),
+		Handler:           api.NewRouter(api.NewHandler(provider, retriever, ragService, st, cfg.Chat, cfg.Ingest, cfg.Search)),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
