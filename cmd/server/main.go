@@ -76,7 +76,7 @@ func run() error {
 
 	srv := &http.Server{
 		Addr:              cfg.HTTP.Addr,
-		Handler:           api.NewRouter(api.NewHandler(provider, retriever, ragService, st, cfg.Chat, cfg.Ingest, cfg.Search)),
+		Handler:           api.NewRouter(api.NewHandler(retriever, ragService, st, cfg.Chat, cfg.Ingest, cfg.Search)),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 

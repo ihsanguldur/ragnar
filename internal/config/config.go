@@ -48,10 +48,9 @@ type IngestConfig struct {
 }
 
 type ChatConfig struct {
-	Timeout      time.Duration `mapstructure:"timeout"`
-	MaxTokens    int           `mapstructure:"max_tokens"`
-	Temperature  float64       `mapstructure:"temperature"`
-	SystemPrompt string        `mapstructure:"system_prompt"`
+	Timeout     time.Duration `mapstructure:"timeout"`
+	MaxTokens   int           `mapstructure:"max_tokens"`
+	Temperature float64       `mapstructure:"temperature"`
 }
 
 type SearchConfig struct {
@@ -140,9 +139,6 @@ func (c Config) validate() error {
 	}
 	if c.Chat.MaxTokens <= 0 {
 		return errors.New("config: chat.max_tokens must be positive")
-	}
-	if c.Chat.SystemPrompt == "" {
-		return errors.New("config: chat.system_prompt is required")
 	}
 	if c.Search.TopK <= 0 {
 		return errors.New("config: search.top_k must be positive")
