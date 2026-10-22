@@ -30,6 +30,16 @@ type AskSourcesEvent struct {
 	Sources []AskSource `json:"sources"`
 }
 
+type AskTokenEvent struct {
+	Text string `json:"text"`
+}
+
+type AskDoneEvent struct {
+	Model        string `json:"model"`
+	InputTokens  int    `json:"input_tokens"`
+	OutputTokens int    `json:"output_tokens"`
+}
+
 func (h *Handler) Ask(w http.ResponseWriter, r *http.Request) {
 	var req AskRequest
 	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
@@ -53,7 +63,7 @@ func (h *Handler) Ask(w http.ResponseWriter, r *http.Request) {
 			ttft = time.Since(start)
 			startSSE(w)
 		}
-		return writeSSE(w, "token", ChatTokenEvent{Text: text})
+		return writeSSE(w, "token", AskTokenEvent{Text: text})
 	})
 	if err != nil {
 		h.askFailed(w, r, err, ttft, time.Since(start))
@@ -82,7 +92,7 @@ func (h *Handler) Ask(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 	writeSSE(w, "sources", AskSourcesEvent{Sources: sources})
-	writeSSE(w, "done", ChatDoneEvent{
+	writeSSE(w, "done", AskDoneEvent{
 		Model:        answer.Model,
 		InputTokens:  answer.Usage.InputTokens,
 		OutputTokens: answer.Usage.OutputTokens,

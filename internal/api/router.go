@@ -15,7 +15,6 @@ func NewRouter(h *Handler) http.Handler {
 	r.Use(middleware.Recoverer)
 
 	r.Get("/healthz", h.Health)
-	r.Post("/chat", h.Chat)
 	r.Post("/documents", h.UploadDocument)
 	r.Get("/documents", h.ListDocuments)
 	r.Get("/documents/{id}", h.GetDocument)

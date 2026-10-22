@@ -27,7 +27,6 @@ chat:
   timeout: 60s
   max_tokens: 1024
   temperature: 0.2
-  system_prompt: "You are a helpful assistant. Answer briefly, in the language of the question."
 
 search:
   top_k: 5
