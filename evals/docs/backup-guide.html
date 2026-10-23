@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Nimbus Backup User Guide</title>
+<style>
+@page { size: A4; margin: 2.2cm; }
+body { font-family: "DejaVu Serif", serif; font-size: 12.5pt; line-height: 1.55; }
+h1 { font-size: 20pt; } h2 { font-size: 15pt; margin-top: 0; }
+.page { page-break-after: always; }
+</style></head><body>
+
+<div class="page">
+<h1>Nimbus Backup User Guide</h1>
+<h2>1. Product Overview</h2>
+<p>Nimbus Backup is a cloud backup service built for small and medium-sized businesses. Using a desktop agent that runs on Windows, macOS and Linux, the service encrypts files on servers and laptops and transfers them to Nimbus data centers. Backup is not supported for mobile devices.</p>
+<p>The service is offered in three plans. The Starter plan includes 500 GB of storage and up to 5 devices. The Professional plan includes 2 TB of storage and up to 25 devices. In the Enterprise plan, storage and the number of devices are set by contract.</p>
+<p>All data is stored simultaneously in two separate data centers, in Frankfurt and Amsterdam. Customer data is never transferred outside the European Union.</p>
+</div>
+
+<div class="page">
+<h2>2. Installation</h2>
+<p>To install the desktop agent, the device must have at least 4 GB of memory and 2 GB of free disk space. The oldest supported version is Windows 10 for Windows and macOS 13 for macOS.</p>
+<p>The installer is downloaded from the "Add device" section of the management console. During installation, the agent asks for a 12-digit pairing code obtained from the console. A pairing code is valid for 24 hours after it is generated; a code that is not used within this time expires and a new code must be generated.</p>
+<p>When the agent runs for the first time, it takes a full backup. How long the full backup takes depends on the amount of data and the internet speed. Until the first backup is complete, the agent icon is shown in yellow; when the backup is complete, the icon turns green. A red icon means that no successful backup has been taken in the last 72 hours.</p>
+</div>
+
+<div class="page">
+<h2>3. Backup Settings</h2>
+<p>After the first full backup, the agent sends only the files that have changed; this method is called incremental backup. The default backup frequency is once an hour. In the Professional and Enterprise plans, the frequency can be lowered to every 15 minutes; in the Starter plan, the most frequent setting is once an hour.</p>
+<p>A single file cannot be larger than 50 GB. Files over this limit are not backed up and are shown as a warning in the management console. Temporary files, the recycle bin and cache folders are excluded from backups by default.</p>
+<p>The agent can limit the bandwidth used during backup. The default limit is 20 Mbit/s during business hours, 09:00–18:00; no limit applies outside business hours.</p>
+<p>Data is encrypted with AES-256 before it leaves the device. The customer can optionally set their own encryption key; in that case, if the key is lost, Nimbus cannot recover the data.</p>
+</div>
+
+<div class="page">
+<h2>4. Restore and Retention</h2>
+<p>Older versions of deleted or changed files are kept for different periods depending on the plan. Older versions are kept for 30 days in the Starter plan, 90 days in the Professional plan and 1 year in the Enterprise plan. After these periods end, older versions are permanently deleted.</p>
+<p>Files can be restored from the management console one by one or as a folder. For restores larger than 200 GB, Nimbus can copy the data to an encrypted external disk and ship it by courier; this service costs 1,500 TL per disk.</p>
+<p>When a subscription is canceled, the data is not deleted immediately. The data remains available for download for 14 days from the cancellation date; at the end of this period, all data is irreversibly deleted.</p>
+</div>
+
+<div class="page">
+<h2>5. Support and Service Level</h2>
+<p>Nimbus commits to the service being available at least 99.9 percent of the time each month. For months in which availability falls below this rate, the customer is given a service credit equal to 10 percent of that month's subscription fee. The service credit is not paid out in cash and is deducted from the next invoice.</p>
+<p>Support requests are opened from the "Support" section of the management console or at support@nimbusbackup.example. In the Starter and Professional plans, support is provided on weekdays between 09:00 and 18:00. Enterprise plan customers get 24/7 phone support.</p>
+<p>The first response time for critical priority requests is 1 hour in the Enterprise plan and 4 business hours in the other plans.</p>
+</div>
+
+</body></html>

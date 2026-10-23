@@ -1,0 +1,346 @@
+# type:
+#   fact         the answer is in a single place
+#   multi        the answer needs two or more places (pages or sections)
+#   unanswerable the documents do not contain the answer; the model must refuse
+questions:
+  # handbook.pdf
+  - id: h01
+    type: fact
+    question: In which year was Atlas Software founded?
+    answer: 2011.
+    sources:
+      - document: handbook.pdf
+        pages: [1]
+  - id: h02
+    type: fact
+    question: How many employees does Atlas Software have?
+    answer: 340.
+    sources:
+      - document: handbook.pdf
+        pages: [1]
+  - id: h03
+    type: fact
+    question: How long does the orientation program last?
+    answer: Three working days.
+    sources:
+      - document: handbook.pdf
+        pages: [1]
+  - id: h04
+    type: fact
+    question: What are the core working hours?
+    answer: 10:00 to 16:00.
+    sources:
+      - document: handbook.pdf
+        pages: [2]
+  - id: h05
+    type: fact
+    question: How is approved overtime compensated?
+    answer: Paid at the hourly wage plus fifty percent; alternatively, one and a half hours of time off for each hour worked.
+    sources:
+      - document: handbook.pdf
+        pages: [2]
+  - id: h06
+    type: fact
+    question: How many days of annual leave does an employee get in their first five years?
+    answer: 18 working days.
+    sources:
+      - document: handbook.pdf
+        pages: [3]
+  - id: h07
+    type: fact
+    question: How many days of annual leave does an employee get after completing five years at the company?
+    answer: 24 working days.
+    sources:
+      - document: handbook.pdf
+        pages: [3]
+  - id: h08
+    type: fact
+    question: Can unused annual leave be carried over to the next year?
+    answer: Up to 5 days; carried-over days are forfeited if not used by March 31.
+    sources:
+      - document: handbook.pdf
+        pages: [3]
+  - id: h09
+    type: fact
+    question: How long is paternity leave?
+    answer: 10 working days.
+    sources:
+      - document: handbook.pdf
+        pages: [3]
+  - id: h10
+    type: fact
+    question: On which day of the week is remote work not allowed?
+    answer: Tuesday.
+    sources:
+      - document: handbook.pdf
+        pages: [4]
+  - id: h11
+    type: fact
+    question: For how many days a year can an employee work remotely from abroad?
+    answer: At most 30 days.
+    sources:
+      - document: handbook.pdf
+        pages: [4]
+  - id: h12
+    type: fact
+    question: How much is the home office allowance for remote workers, and what is the condition?
+    answer: 1,200 TL per month, if the employee worked remotely for at least 8 days that month.
+    sources:
+      - document: handbook.pdf
+        pages: [4]
+  - id: h13
+    type: fact
+    question: What is the yearly limit for dental treatment under the health insurance?
+    answer: 6,000 TL per year.
+    sources:
+      - document: handbook.pdf
+        pages: [5]
+  - id: h14
+    type: fact
+    question: Are glasses and contact lenses covered?
+    answer: Yes, up to 2,500 TL once every two years.
+    sources:
+      - document: handbook.pdf
+        pages: [5]
+  - id: h15
+    type: fact
+    question: Which routes does the staff shuttle serve?
+    answer: Karsiyaka, Bornova and Buca.
+    sources:
+      - document: handbook.pdf
+        pages: [5]
+  - id: h16
+    type: fact
+    question: How much is the gym membership allowance?
+    answer: 750 TL per month.
+    sources:
+      - document: handbook.pdf
+        pages: [6]
+  - id: h17
+    type: fact
+    question: How often are laptops replaced?
+    answer: Every 3 years.
+    sources:
+      - document: handbook.pdf
+        pages: [7]
+  - id: h18
+    type: fact
+    question: After what time does the company cover taxi costs for employees leaving the office?
+    answer: After 23:00.
+    sources:
+      - document: handbook.pdf
+        pages: [7]
+  - id: h19
+    type: fact
+    question: How large is the performance bonus and when is it paid?
+    answer: 0 to 20 percent of the gross monthly salary, paid with the February salary.
+    sources:
+      - document: handbook.pdf
+        pages: [8]
+  - id: h20
+    type: fact
+    question: When are promotion decisions announced?
+    answer: In January.
+    sources:
+      - document: handbook.pdf
+        pages: [8]
+  - id: h21
+    type: fact
+    question: What is the notice period for an employee with more than three years of service?
+    answer: 8 weeks.
+    sources:
+      - document: handbook.pdf
+        pages: [9]
+  - id: h22
+    type: fact
+    question: What is the email address of the Human Resources department?
+    answer: hr@atlassoftware.example
+    sources:
+      - document: handbook.pdf
+        pages: [9]
+
+  # lease.pdf
+  - id: l01
+    type: fact
+    question: How much is the monthly rent and when is it due?
+    answer: 32,500 TL, by the 5th of each month.
+    sources:
+      - document: lease.pdf
+        pages: [1]
+  - id: l02
+    type: fact
+    question: What happens if the rent is paid late?
+    answer: A late fee of five per thousand of the monthly rent is charged for each day of delay.
+    sources:
+      - document: lease.pdf
+        pages: [1]
+  - id: l03
+    type: fact
+    question: Where is the apartment and how big is it?
+    answer: In Bostanli, Karsiyaka, Izmir; 3+1, 125 square meters.
+    sources:
+      - document: lease.pdf
+        pages: [1]
+  - id: l04
+    type: fact
+    question: When does the lease start and how long is it?
+    answer: It starts on September 1, 2026 and lasts one year.
+    sources:
+      - document: lease.pdf
+        pages: [1]
+  - id: l05
+    type: fact
+    question: How much is the deposit and when is it returned?
+    answer: 65,000 TL, returned within 30 days of moving out.
+    sources:
+      - document: lease.pdf
+        pages: [2]
+  - id: l06
+    type: fact
+    question: Can the tenant keep a cat in the apartment?
+    answer: No, pets are not allowed.
+    sources:
+      - document: lease.pdf
+        pages: [2]
+  - id: l07
+    type: fact
+    question: How will next year's rent hike be worked out?
+    answer: By the twelve-month average CPI of the previous lease year.
+    sources:
+      - document: lease.pdf
+        pages: [2]
+  - id: l08
+    type: fact
+    question: Who pays the building maintenance fee?
+    answer: The tenant.
+    sources:
+      - document: lease.pdf
+        pages: [3]
+  - id: l09
+    type: fact
+    question: How much notice must the tenant give to terminate the agreement?
+    answer: At least 2 months, in writing.
+    sources:
+      - document: lease.pdf
+        pages: [3]
+
+  # backup-guide.pdf
+  - id: b01
+    type: fact
+    question: How many devices does the Nimbus Backup Professional plan support?
+    answer: Up to 25 devices (with 2 TB of storage).
+    sources:
+      - document: backup-guide.pdf
+        pages: [1]
+  - id: b02
+    type: fact
+    question: Can Nimbus Backup back up mobile devices?
+    answer: No, mobile devices are not supported.
+    sources:
+      - document: backup-guide.pdf
+        pages: [1]
+  - id: b03
+    type: fact
+    question: In which data centers are the backups stored?
+    answer: Frankfurt and Amsterdam.
+    sources:
+      - document: backup-guide.pdf
+        pages: [1]
+  - id: b04
+    type: fact
+    question: How long is a pairing code valid?
+    answer: 24 hours.
+    sources:
+      - document: backup-guide.pdf
+        pages: [2]
+  - id: b05
+    type: fact
+    question: What does a red agent icon mean?
+    answer: No successful backup has been taken in the last 72 hours.
+    sources:
+      - document: backup-guide.pdf
+        pages: [2]
+  - id: b06
+    type: fact
+    question: What is the most frequent backup setting in the Starter plan?
+    answer: Once an hour.
+    sources:
+      - document: backup-guide.pdf
+        pages: [3]
+  - id: b07
+    type: fact
+    question: What is the maximum size of a single file that can be backed up?
+    answer: 50 GB.
+    sources:
+      - document: backup-guide.pdf
+        pages: [3]
+  - id: b08
+    type: fact
+    question: How long are older file versions kept in the Professional plan?
+    answer: 90 days.
+    sources:
+      - document: backup-guide.pdf
+        pages: [4]
+  - id: b09
+    type: fact
+    question: How long can the data still be downloaded after a subscription is canceled?
+    answer: 14 days.
+    sources:
+      - document: backup-guide.pdf
+        pages: [4]
+  - id: b10
+    type: fact
+    question: What does the customer get if the availability commitment is not met?
+    answer: A service credit of 10 percent of that month's subscription fee (the commitment is 99.9 percent per month).
+    sources:
+      - document: backup-guide.pdf
+        pages: [5]
+
+  # multi: the answer spans pages or sections
+  - id: m01
+    type: multi
+    question: How large is the training budget per person, and what condition applies to a training that costs more than 10,000 TL?
+    answer: 15,000 TL per year; for a training over 10,000 TL the employee commits to staying at least 12 months after it ends.
+    sources:
+      - document: handbook.pdf
+        pages: [5, 6]
+  - id: m02
+    type: multi
+    question: How many days of leave does an employee get when they marry, and when can they add their spouse to the health insurance?
+    answer: 5 working days of marriage leave; the spouse is added during the policy period if the marriage is reported within 30 days.
+    sources:
+      - document: handbook.pdf
+        pages: [3, 5]
+  - id: m03
+    type: multi
+    question: How much storage does the Nimbus Starter plan offer, and how long does it keep older file versions?
+    answer: 500 GB; older versions are kept for 30 days.
+    sources:
+      - document: backup-guide.pdf
+        pages: [1, 4]
+
+  # unanswerable
+  - id: u01
+    type: unanswerable
+    question: What is the capital of Turkey?
+    sources: []
+  - id: u02
+    type: unanswerable
+    question: Who is the CEO of Atlas Software?
+    sources: []
+  - id: u03
+    type: unanswerable
+    question: What is the landlord's phone number?
+    sources: []
+  - id: u04
+    type: unanswerable
+    question: What is the monthly price of the Nimbus Backup Professional plan?
+    sources: []
+  - id: u05
+    type: unanswerable
+    question: How many days of paid sick leave do employees get per year?
+    sources: []
+  - id: u06
+    type: unanswerable
+    question: What is the capital of France?
+    sources: []
