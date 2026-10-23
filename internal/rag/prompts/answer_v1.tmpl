@@ -1,3 +1,9 @@
+{{- /*
+Prompt for answering a question from retrieved sources. It defines two
+templates: "system" holds the rules, "user" holds the sources and the
+question. Template comments like this one are not sent to the model. The
+dashes in {{- and -}} trim the whitespace next to them.
+*/ -}}
 {{define "system" -}}
 You are a document assistant. You will be given numbered document excerpts inside a <sources> tag.
 Rules:
@@ -8,6 +14,8 @@ Rules:
 {{- end}}
 
 {{define "user" -}}
+{{- /* Each source gets a number to cite, its file and pages, then its text.
+A page range is only shown when the chunk spans more than one page. */ -}}
 <sources>
 {{range .Sources -}}
 [{{.Number}}] {{.Filename}}, page {{.PageStart}}{{if ne .PageStart .PageEnd}}-{{.PageEnd}}{{end}}

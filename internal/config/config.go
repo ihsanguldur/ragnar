@@ -9,6 +9,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config is the whole runtime configuration. Each section matches a
+// top-level key in config.yaml.
 type Config struct {
 	HTTP     HTTPConfig     `mapstructure:"http"`
 	Ollama   OllamaConfig   `mapstructure:"ollama"`
@@ -33,6 +35,10 @@ type DatabaseConfig struct {
 	URL string `mapstructure:"url"`
 }
 
+// IngestConfig controls uploads and the background ingestion workers.
+// ChunkSize and ChunkOverlap are in characters. RetryBackoff is the delay
+// before the first retry of a failed embedding and doubles with each
+// attempt, up to MaxAttempts.
 type IngestConfig struct {
 	UploadDir      string        `mapstructure:"upload_dir"`
 	MaxUploadMB    int64         `mapstructure:"max_upload_mb"`
@@ -47,17 +53,26 @@ type IngestConfig struct {
 	RetryBackoff   time.Duration `mapstructure:"retry_backoff"`
 }
 
+// ChatConfig controls answer generation. Timeout covers a whole /ask
+// request: retrieval plus the full streamed answer.
 type ChatConfig struct {
 	Timeout     time.Duration `mapstructure:"timeout"`
 	MaxTokens   int           `mapstructure:"max_tokens"`
 	Temperature float64       `mapstructure:"temperature"`
 }
 
+// SearchConfig controls retrieval. TopK is how many chunks a search returns,
+// which for /ask is also how many sources the model sees.
 type SearchConfig struct {
 	TopK    int           `mapstructure:"top_k"`
 	Timeout time.Duration `mapstructure:"timeout"`
 }
 
+// Load reads the YAML file at path and validates it. Any key can be
+// overridden with an environment variable named RAGNAR_ followed by the key
+// path in upper case with dots replaced by underscores, for example
+// RAGNAR_SEARCH_TOP_K for search.top_k. Overrides only apply to keys that
+// exist in the file.
 func Load(path string) (Config, error) {
 	v := viper.New()
 	v.SetConfigFile(path)
@@ -82,6 +97,9 @@ func Load(path string) (Config, error) {
 	return cfg, nil
 }
 
+// validate rejects missing and non-positive values at startup, so a typo in
+// the config fails immediately instead of as a zero timeout or an empty
+// model name at request time.
 func (c Config) validate() error {
 	if c.HTTP.Addr == "" {
 		return errors.New("config: http.addr is required")

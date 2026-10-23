@@ -9,6 +9,8 @@ import (
 	"net/http"
 )
 
+// Ollama is an Embedder backed by a local Ollama server's /api/embed
+// endpoint, which accepts a batch of texts in one request.
 type Ollama struct {
 	baseURL string
 	model   string
@@ -63,6 +65,8 @@ func (o *Ollama) Embed(ctx context.Context, texts []string) ([][]float32, error)
 	if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
 		return nil, fmt.Errorf("ollama embed: decode response: %w", err)
 	}
+	// Callers pair vectors with texts by index, so a short reply must not
+	// pass silently.
 	if len(out.Embeddings) != len(texts) {
 		return nil, fmt.Errorf("ollama embed: got %d embeddings for %d texts", len(out.Embeddings), len(texts))
 	}

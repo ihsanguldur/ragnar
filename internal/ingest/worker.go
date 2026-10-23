@@ -15,6 +15,10 @@ import (
 	"github.com/ihsanguldur/ragnar/internal/store"
 )
 
+// Worker turns queued documents into searchable chunks: extract the text,
+// split it into chunks, embed the chunks, and save everything. A Worker holds
+// no per-document state, so one value can be shared by several goroutines
+// calling Run; the store makes sure each document is claimed only once.
 type Worker struct {
 	store     *store.Store
 	extractor extract.Extractor
@@ -26,6 +30,9 @@ func NewWorker(st *store.Store, ex extract.Extractor, em embed.Embedder, cfg con
 	return &Worker{store: st, extractor: ex, embedder: em, cfg: cfg}
 }
 
+// Run processes documents until ctx is cancelled. While there is work it
+// moves straight to the next document; when the queue is empty or a database
+// call fails, it waits PollInterval before checking again.
 func (w *Worker) Run(ctx context.Context) {
 	for ctx.Err() == nil {
 		processed, err := w.processNext(ctx)
@@ -43,6 +50,14 @@ func (w *Worker) Run(ctx context.Context) {
 	}
 }
 
+// processNext claims and processes one document. It reports whether a
+// document was claimed, so Run knows whether to look for more right away.
+//
+// Extraction errors are permanent: the same PDF will fail the same way
+// again, so the document is marked failed. Embedding errors are usually
+// temporary (Ollama busy or restarting), so the document is retried later.
+// If ctx is cancelled mid-way, the document is left in processing and is
+// requeued when the server starts again.
 func (w *Worker) processNext(ctx context.Context) (bool, error) {
 	doc, found, err := w.store.ClaimDocument(ctx)
 	if err != nil || !found {
@@ -56,10 +71,13 @@ func (w *Worker) processNext(ctx context.Context) (bool, error) {
 	defer cancel()
 
 	pages, err := w.extractor.Extract(extractCtx, path)
+	// Shutting down: the error is caused by the cancellation, not by the
+	// document, so it must not be recorded as a failure.
 	if ctx.Err() != nil {
 		return true, nil
 	}
 	if err != nil {
+		// Only the extraction timeout expired, not the worker's context.
 		if errors.Is(extractCtx.Err(), context.DeadlineExceeded) {
 			err = fmt.Errorf("extraction timed out after %s", w.cfg.ExtractTimeout)
 		}
@@ -89,6 +107,9 @@ func (w *Worker) processNext(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
+// embed embeds the chunks in batches of EmbedBatchSize. Batching cuts the
+// number of requests, while keeping each request small enough to finish
+// within EmbedTimeout.
 func (w *Worker) embed(ctx context.Context, chunks []chunk.Chunk) ([][]float32, error) {
 	vectors := make([][]float32, 0, len(chunks))
 	for i := 0; i < len(chunks); i += w.cfg.EmbedBatchSize {
@@ -112,12 +133,16 @@ func (w *Worker) embed(ctx context.Context, chunks []chunk.Chunk) ([][]float32, 
 	return vectors, nil
 }
 
+// retry schedules another attempt with exponential backoff, or marks the
+// document failed once MaxAttempts is reached.
 func (w *Worker) retry(ctx context.Context, doc store.Document, err error) error {
 	attempt := doc.Attempts + 1
 	if attempt >= w.cfg.MaxAttempts {
 		return w.fail(ctx, doc, fmt.Errorf("giving up after %d attempts: %w", attempt, err))
 	}
 
+	// Shifting left by n multiplies by 2^n: with a 30s backoff the waits
+	// are 30s, 1m, 2m, 4m, ...
 	delay := w.cfg.RetryBackoff << time.Duration(doc.Attempts)
 
 	slog.Info("document retrying",

@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// Ollama is a Provider backed by a local Ollama server's /api/chat endpoint.
 type Ollama struct {
 	baseURL string
 	model   string
@@ -18,6 +19,9 @@ type Ollama struct {
 	client  *http.Client
 }
 
+// NewOllama returns a client for model. numCtx is the context window in
+// tokens; the prompt and the reply together must fit in it, and a larger
+// window needs more GPU memory.
 func NewOllama(baseURL, model string, numCtx int) *Ollama {
 	return &Ollama{
 		baseURL: baseURL,
@@ -37,10 +41,13 @@ type ollamaChatRequest struct {
 
 type ollamaOptions struct {
 	Temperature float64 `json:"temperature"`
-	NumPredict  int     `json:"num_predict,omitempty"`
-	NumCtx      int     `json:"num_ctx,omitempty"`
+	// NumPredict is Ollama's name for the maximum number of reply tokens.
+	NumPredict int `json:"num_predict,omitempty"`
+	NumCtx     int `json:"num_ctx,omitempty"`
 }
 
+// ollamaChatResponse is the whole reply when streaming is off, and one line
+// of the reply when it is on. Token counts are only set on the final line.
 type ollamaChatResponse struct {
 	Model           string  `json:"model"`
 	Message         Message `json:"message"`
@@ -79,11 +86,15 @@ func (o *Ollama) ChatStream(ctx context.Context, req ChatRequest, onToken func(t
 	}
 	defer resp.Body.Close()
 
+	// A streamed reply is newline-delimited JSON: one object per generated
+	// piece of text, ending with an object that has done set to true.
 	var content strings.Builder
 	dec := json.NewDecoder(resp.Body)
 	for {
 		var line ollamaChatResponse
 		if err := dec.Decode(&line); err != nil {
+			// EOF before a done line means the server dropped the stream,
+			// so the reply is incomplete.
 			if errors.Is(err, io.EOF) {
 				return ChatResponse{}, errors.New("ollama: stream ended before done")
 			}
@@ -118,7 +129,9 @@ func (o *Ollama) send(ctx context.Context, req ChatRequest, stream bool) (*http.
 		Model:    o.model,
 		Messages: req.Messages,
 		Stream:   stream,
-		Think:    false,
+		// Reasoning models such as qwen3 otherwise write a long hidden
+		// reasoning section before answering, which adds latency and tokens.
+		Think: false,
 		Options: ollamaOptions{
 			Temperature: req.Temperature,
 			NumPredict:  req.MaxTokens,
@@ -140,6 +153,8 @@ func (o *Ollama) send(ctx context.Context, req ChatRequest, stream bool) (*http.
 		return nil, fmt.Errorf("ollama: send request: %w", err)
 	}
 
+	// On success the caller reads and closes the body; on failure it is read
+	// here, capped at 4 KB, so the error message includes Ollama's reason.
 	if resp.StatusCode != http.StatusOK {
 		defer resp.Body.Close()
 		msg, _ := io.ReadAll(io.LimitReader(resp.Body, 4096))
