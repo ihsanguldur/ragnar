@@ -14,13 +14,19 @@ import (
 	"github.com/pressly/goose/v3"
 )
 
+// The SQL migrations are compiled into the binary, so it can set up its own
+// schema without the files being present at runtime.
+//
 //go:embed migrations/*.sql
 var migrations embed.FS
 
+// Store is the Postgres-backed persistence layer. It is safe for concurrent
+// use: queries share a connection pool.
 type Store struct {
 	pool *pgxpool.Pool
 }
 
+// Open applies pending migrations and connects to the database at url.
 func Open(ctx context.Context, url string) (*Store, error) {
 	cfg, err := pgxpool.ParseConfig(url)
 	if err != nil {
@@ -30,6 +36,9 @@ func Open(ctx context.Context, url string) (*Store, error) {
 		return nil, err
 	}
 
+	// The vector type is defined by the pgvector extension, not by Postgres
+	// itself, so every new connection has to learn how to encode it. This
+	// runs after the migrations, because they create the extension.
 	cfg.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
 		return pgxvec.RegisterTypes(ctx, conn)
 	}
@@ -48,6 +57,9 @@ func (s *Store) Close() {
 	s.pool.Close()
 }
 
+// migrate applies every migration that has not run yet; goose records the
+// applied versions in its own table. goose works with database/sql, so it
+// gets a separate short-lived connection instead of the pgx pool.
 func migrate(ctx context.Context, connCfg *pgx.ConnConfig) error {
 	files, err := fs.Sub(migrations, "migrations")
 	if err != nil {

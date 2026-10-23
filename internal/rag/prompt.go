@@ -10,13 +10,26 @@ import (
 	"github.com/ihsanguldur/ragnar/internal/store"
 )
 
+// The prompt lives in a template file rather than in Go strings, so it can be
+// read and changed as plain text. The version in the file name lets
+// different wordings be compared side by side.
+//
 //go:embed prompts/answer_v1.tmpl
 var promptFS embed.FS
 
+// NoAnswer is the exact sentence the model is told to reply with when the
+// sources do not answer the question. It is also returned without calling the
+// model when retrieval finds nothing.
 const NoAnswer = "There is no information in documents."
 
+// answerTmpl is parsed once at startup; Must panics on a broken template, so
+// a mistake in the file stops the program immediately instead of failing on
+// the first request. text/template is used rather than html/template because
+// the output is a prompt, not HTML, and must not be escaped.
 var answerTmpl = template.Must(template.ParseFS(promptFS, "prompts/answer_v1.tmpl"))
 
+// Source is a retrieved chunk as shown to the model. Number is its position
+// in the prompt, starting at 1, which the model cites as [Number].
 type Source struct {
 	Number     int
 	DocumentID string
@@ -27,11 +40,16 @@ type Source struct {
 	Content    string
 }
 
+// Prompt is the chat messages to send and the numbered sources they contain,
+// kept so that citations in the reply can be mapped back.
 type Prompt struct {
 	Messages []llm.Message
 	Sources  []Source
 }
 
+// BuildPrompt renders the system message, which holds the answering rules,
+// and the user message, which holds the numbered sources and the question.
+// Sources are numbered in retrieval order, so [1] is the best match.
 func BuildPrompt(question string, matches []store.ChunkMatch) (Prompt, error) {
 	sources := make([]Source, len(matches))
 	for i, m := range matches {

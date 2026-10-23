@@ -15,6 +15,9 @@ import (
 	"github.com/ihsanguldur/ragnar/internal/store"
 )
 
+// DocumentResponse describes an uploaded document. Status moves from pending
+// to processing to ready, or to failed with Error set. PageCount is set once
+// the document is ready.
 type DocumentResponse struct {
 	ID        string    `json:"id"`
 	Filename  string    `json:"filename"`
@@ -43,7 +46,12 @@ func newDocumentResponse(d store.Document) DocumentResponse {
 	}
 }
 
+// UploadDocument handles POST /documents with a multipart "file" field. It
+// stores the PDF and queues it for ingestion. The response is 202 Accepted
+// for a new document, and 200 OK with the existing record when the same file
+// was uploaded before.
 func (h *Handler) UploadDocument(w http.ResponseWriter, r *http.Request) {
+	// <<20 converts megabytes to bytes.
 	r.Body = http.MaxBytesReader(w, r.Body, h.ingest.MaxUploadMB<<20)
 
 	file, header, err := r.FormFile("file")
@@ -58,6 +66,9 @@ func (h *Handler) UploadDocument(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
+	// Every PDF starts with "%PDF-". Checking the content rather than the
+	// file extension or the client's Content-Type rejects other files that
+	// were merely renamed. The file is then rewound so it is saved in full.
 	magic := make([]byte, 5)
 	if _, err := io.ReadFull(file, magic); err != nil || string(magic) != "%PDF-" {
 		writeError(w, http.StatusBadRequest, "file is not a PDF")
@@ -92,6 +103,12 @@ func (h *Handler) UploadDocument(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, status, newDocumentResponse(doc))
 }
 
+// saveUpload writes src to dir/<sha256>.pdf and returns the hash and size.
+// The hash is computed while the file is written, in a single pass. Naming
+// files by content means identical uploads share one file. Writing to a
+// temporary file and renaming it at the end means a half-written file never
+// appears under the final name; the deferred Remove cleans up after a
+// failure and does nothing once the rename has succeeded.
 func saveUpload(dir string, src io.Reader) (sum string, size int64, err error) {
 	tmp, err := os.CreateTemp(dir, "upload-*.tmp")
 	if err != nil {
@@ -105,6 +122,8 @@ func saveUpload(dir string, src io.Reader) (sum string, size int64, err error) {
 	if err != nil {
 		return "", 0, err
 	}
+	// Close reports write errors that Copy may not have seen, so it is
+	// checked before the file is renamed.
 	if err := tmp.Close(); err != nil {
 		return "", 0, err
 	}
@@ -116,6 +135,7 @@ func saveUpload(dir string, src io.Reader) (sum string, size int64, err error) {
 	return sum, size, nil
 }
 
+// ListDocuments handles GET /documents.
 func (h *Handler) ListDocuments(w http.ResponseWriter, r *http.Request) {
 	docs, err := h.store.ListDocuments(r.Context())
 	if err != nil {
@@ -131,6 +151,8 @@ func (h *Handler) ListDocuments(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, resp)
 }
 
+// GetDocument handles GET /documents/{id}. Clients poll it after an upload
+// to see when the document is ready.
 func (h *Handler) GetDocument(w http.ResponseWriter, r *http.Request) {
 	doc, found, err := h.store.GetDocument(r.Context(), r.PathValue("id"))
 	if err != nil {

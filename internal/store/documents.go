@@ -13,6 +13,9 @@ import (
 	"github.com/pgvector/pgvector-go"
 )
 
+// Document is an uploaded file and its place in the ingestion queue. Error
+// holds the last failure, and PageCount is set once the document is ready;
+// both are pointers because the columns can be NULL.
 type Document struct {
 	ID        string
 	Filename  string
@@ -26,8 +29,13 @@ type Document struct {
 	UpdatedAt time.Time
 }
 
+// documentColumns lists the columns in the order scanDocument reads them.
+// Queries that return documents must select exactly these.
 const documentColumns = `id, filename, sha256, size_bytes, status, error, page_count, attempts, created_at, updated_at`
 
+// scanDocument reads one row selected with documentColumns. pgx.Row is
+// satisfied by both QueryRow results and Rows, so it serves single and
+// multi-row queries.
 func scanDocument(row pgx.Row) (Document, error) {
 	var d Document
 	err := row.Scan(
@@ -45,6 +53,14 @@ func scanDocument(row pgx.Row) (Document, error) {
 	return d, err
 }
 
+// CreateDocument queues a new document for ingestion. If a document with the
+// same content hash already exists, it returns that one with created set to
+// false.
+//
+// ON CONFLICT DO NOTHING makes the check and the insert one atomic step, so
+// two simultaneous uploads of the same file cannot both create a row. When
+// the insert is skipped, RETURNING yields no row and the existing document
+// is fetched instead.
 func (s *Store) CreateDocument(ctx context.Context, filename, sha256 string, size int64) (doc Document, created bool, err error) {
 	doc, err = scanDocument(s.pool.QueryRow(ctx, `
 		INSERT INTO documents (filename, sha256, size_bytes)
@@ -69,6 +85,13 @@ func (s *Store) CreateDocument(ctx context.Context, filename, sha256 string, siz
 	return doc, false, nil
 }
 
+// ClaimDocument takes the oldest pending document that is due and marks it
+// processing, so the documents table doubles as a job queue.
+//
+// FOR UPDATE SKIP LOCKED makes concurrent workers skip rows another worker is
+// claiming at that moment instead of waiting for them, so each document is
+// claimed by exactly one worker. Documents scheduled for a later retry are
+// not due until next_attempt_at.
 func (s *Store) ClaimDocument(ctx context.Context) (doc Document, found bool, err error) {
 	doc, err = scanDocument(s.pool.QueryRow(ctx, `
 		UPDATE documents
@@ -91,11 +114,18 @@ func (s *Store) ClaimDocument(ctx context.Context) (doc Document, found bool, er
 	return doc, true, nil
 }
 
+// CompleteDocument saves the pages and the embedded chunks of a document and
+// marks it ready. vectors[i] is the embedding of chunks[i].
+//
+// Everything happens in one transaction, so a document is never ready with
+// only some of its chunks saved.
 func (s *Store) CompleteDocument(ctx context.Context, id string, pages []extract.Page, chunks []chunk.Chunk, vectors [][]float32, model string) error {
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		return fmt.Errorf("store: begin: %w", err)
 	}
+	// Rollback does nothing once Commit has succeeded, so deferring it
+	// undoes the transaction on every early return.
 	defer tx.Rollback(ctx)
 
 	for _, p := range pages {
@@ -108,6 +138,8 @@ func (s *Store) CompleteDocument(ctx context.Context, id string, pages []extract
 		}
 	}
 
+	// COPY streams all rows in one round trip, much faster than one INSERT
+	// per chunk.
 	_, err = tx.CopyFrom(ctx,
 		pgx.Identifier{"chunks"},
 		[]string{"document_id", "chunk_index", "page_start", "page_end", "content", "embedding", "embedding_model"},
@@ -136,6 +168,7 @@ func (s *Store) CompleteDocument(ctx context.Context, id string, pages []extract
 	return nil
 }
 
+// FailDocument marks a document as permanently failed. It is not retried.
 func (s *Store) FailDocument(ctx context.Context, id, reason string) error {
 	_, err := s.pool.Exec(ctx, `
 		UPDATE documents
@@ -149,6 +182,8 @@ func (s *Store) FailDocument(ctx context.Context, id, reason string) error {
 	return nil
 }
 
+// RetryDocument puts a document back in the queue, to be claimed again after
+// delay. The schedule lives in the database, so it survives restarts.
 func (s *Store) RetryDocument(ctx context.Context, id, reason string, delay time.Duration) error {
 	_, err := s.pool.Exec(ctx, `
 		UPDATE documents
@@ -162,6 +197,10 @@ func (s *Store) RetryDocument(ctx context.Context, id, reason string, delay time
 	return nil
 }
 
+// RequeueProcessing returns documents stuck in processing to the queue and
+// reports how many there were. It runs at startup: with a single server
+// instance, a document can only be processing then if the previous run
+// stopped in the middle of it.
 func (s *Store) RequeueProcessing(ctx context.Context) (int64, error) {
 	tag, err := s.pool.Exec(ctx, `
 		UPDATE documents
@@ -174,6 +213,7 @@ func (s *Store) RequeueProcessing(ctx context.Context) (int64, error) {
 	return tag.RowsAffected(), nil
 }
 
+// ListDocuments returns all documents, newest first.
 func (s *Store) ListDocuments(ctx context.Context) ([]Document, error) {
 	rows, err := s.pool.Query(ctx,
 		`SELECT `+documentColumns+` FROM documents ORDER BY created_at DESC`,
@@ -201,6 +241,9 @@ func (s *Store) GetDocument(ctx context.Context, id string) (doc Document, found
 	doc, err = scanDocument(s.pool.QueryRow(ctx,
 		`SELECT `+documentColumns+` FROM documents WHERE id = $1`, id,
 	))
+	// 22P02 (invalid_text_representation) means id is not a valid UUID. No
+	// document can have such an id, so it is reported as not found rather
+	// than as a database error.
 	var pgErr *pgconn.PgError
 	if errors.Is(err, pgx.ErrNoRows) || (errors.As(err, &pgErr) && pgErr.Code == "22P02") {
 		return Document{}, false, nil

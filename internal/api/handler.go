@@ -7,6 +7,8 @@ import (
 	"github.com/ihsanguldur/ragnar/internal/store"
 )
 
+// Handler holds the dependencies of the HTTP handlers. Each endpoint's
+// handler method and its request and response types live in their own file.
 type Handler struct {
 	retriever *retrieval.Retriever
 	rag       *rag.Service
