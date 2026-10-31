@@ -85,6 +85,7 @@ func (h *Handler) Ask(w http.ResponseWriter, r *http.Request) {
 		"ask",
 		"model", answer.Model,
 		"cited_sources", len(answer.Sources),
+		"invalid_citations", answer.InvalidCitations,
 		"input_tokens", answer.Usage.InputTokens,
 		"output_tokens", answer.Usage.OutputTokens,
 		"ttft_ms", ttft.Milliseconds(),

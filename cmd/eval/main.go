@@ -21,6 +21,8 @@ import (
 	"github.com/ihsanguldur/ragnar/internal/eval"
 	"github.com/ihsanguldur/ragnar/internal/extract"
 	"github.com/ihsanguldur/ragnar/internal/ingest"
+	"github.com/ihsanguldur/ragnar/internal/llm"
+	"github.com/ihsanguldur/ragnar/internal/rag"
 	"github.com/ihsanguldur/ragnar/internal/retrieval"
 	"github.com/ihsanguldur/ragnar/internal/store"
 	"github.com/jackc/pgx/v5"
@@ -35,11 +37,14 @@ func main() {
 
 // run ingests the eval documents into a throwaway database, runs every
 // answerable question through retrieval, and prints a per-question table
-// followed by recall and MRR per question type. Settings such as top_k or
-// chunk_size are changed with the usual RAGNAR_ environment variables.
+// followed by recall and MRR per question type. Unless -retrieval-only is
+// set, it then answers every question and has a judge model grade the
+// answers. Settings such as top_k or chunk_size are changed with the usual
+// RAGNAR_ environment variables.
 func run() error {
 	goldenPath := flag.String("golden", "evals/golden.yaml", "golden question set")
 	docsDir := flag.String("docs", "evals/docs", "directory with the PDFs to ingest")
+	retrievalOnly := flag.Bool("retrieval-only", false, "skip answer generation and grading")
 	flag.Parse()
 
 	cfg, err := config.Load("config.yaml")
@@ -121,7 +126,19 @@ func run() error {
 	}
 	s := eval.SummarizeRetrieval(all)
 	fmt.Fprintf(tw, "all\t%d\t%.3f\t%.3f\n", s.Questions, s.Recall, s.MRR)
-	return tw.Flush()
+	if err := tw.Flush(); err != nil {
+		return err
+	}
+	if *retrievalOnly {
+		return nil
+	}
+
+	// The judge runs on the same model that wrote the answers, which can make
+	// it lenient towards them, so the header says so.
+	fmt.Printf("\ngeneration: chat_model=%s temperature=%.1f judge=%s (thinking, same model as chat)\n\n", cfg.Ollama.ChatModel, cfg.Chat.Temperature, cfg.Ollama.ChatModel)
+	provider := llm.NewOllama(cfg.Ollama.URL, cfg.Ollama.ChatModel, cfg.Ollama.NumCtx)
+	svc := rag.NewService(retriever, provider, cfg.Chat.Temperature, cfg.Chat.MaxTokens)
+	return runGeneration(ctx, questions, svc, eval.NewJudge(provider))
 }
 
 // createTempDB creates an empty database next to the configured one, so an
