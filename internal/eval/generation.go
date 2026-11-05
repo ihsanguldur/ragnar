@@ -9,18 +9,19 @@ import (
 
 // GenerationResult is how one generated answer was graded.
 type GenerationResult struct {
+	Answer string `json:"answer"`
 	// Correct is the judge's verdict for answerable questions, and whether
 	// the model refused for unanswerable ones.
-	Correct bool
-	Refused bool
-	Reason  string
+	Correct bool   `json:"correct"`
+	Refused bool   `json:"refused"`
+	Reason  string `json:"reason,omitempty"`
 	// Citations is how well the cited sources cover the expected pages.
 	// Unanswerable questions expect none, so it stays zero for them.
-	Citations        RetrievalResult
-	InvalidCitations int
+	Citations        RetrievalResult `json:"citations"`
+	InvalidCitations int             `json:"invalid_citations"`
 	// JudgeFailed means the judge gave no usable verdict. The answer then
 	// counts as incorrect, and the summary reports how often it happened.
-	JudgeFailed bool
+	JudgeFailed bool `json:"judge_failed"`
 }
 
 // IsRefusal reports whether the model gave the no-answer sentence. The
@@ -40,16 +41,18 @@ func ScoreCitations(sources []Source, cited []rag.Source) RetrievalResult {
 }
 
 type GenerationSummary struct {
-	Questions int
-	Accuracy  float64
+	Questions int     `json:"questions"`
+	Accuracy  float64 `json:"accuracy"`
 	// Refused is the share of questions the model refused. For answerable
 	// questions it should be close to 0, for unanswerable ones close to 1.
-	Refused float64
+	Refused float64 `json:"refused"`
 	// CitationRecall is the average share of expected pages the answer
-	// cites, over questions that expect any.
-	CitationRecall   float64
-	InvalidCitations int
-	JudgeErrors      int
+	// cites, over the CitationQuestions questions that expect any. With none,
+	// both are 0 and the recall means "not applicable", not "all missed".
+	CitationRecall    float64 `json:"citation_recall"`
+	CitationQuestions int     `json:"citation_questions"`
+	InvalidCitations  int     `json:"invalid_citations"`
+	JudgeErrors       int     `json:"judge_errors"`
 }
 
 func SummarizeGeneration(results []GenerationResult) GenerationSummary {
@@ -57,7 +60,6 @@ func SummarizeGeneration(results []GenerationResult) GenerationSummary {
 	if len(results) == 0 {
 		return s
 	}
-	cited := 0
 	for _, r := range results {
 		if r.Correct {
 			s.Accuracy++
@@ -67,7 +69,7 @@ func SummarizeGeneration(results []GenerationResult) GenerationSummary {
 		}
 		if r.Citations.Expected > 0 {
 			s.CitationRecall += float64(r.Citations.Found) / float64(r.Citations.Expected)
-			cited++
+			s.CitationQuestions++
 		}
 		s.InvalidCitations += r.InvalidCitations
 		if r.JudgeFailed {
@@ -76,8 +78,8 @@ func SummarizeGeneration(results []GenerationResult) GenerationSummary {
 	}
 	s.Accuracy /= float64(len(results))
 	s.Refused /= float64(len(results))
-	if cited > 0 {
-		s.CitationRecall /= float64(cited)
+	if s.CitationQuestions > 0 {
+		s.CitationRecall /= float64(s.CitationQuestions)
 	}
 	return s
 }

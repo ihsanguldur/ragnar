@@ -7,11 +7,11 @@ import "github.com/ihsanguldur/ragnar/internal/store"
 type RetrievalResult struct {
 	// Rank is the position, starting at 1, of the first chunk that contains
 	// an expected page, or 0 if none does.
-	Rank int
+	Rank int `json:"rank"`
 	// Found is how many expected pages are contained in at least one
 	// retrieved chunk, out of Expected.
-	Found    int
-	Expected int
+	Found    int `json:"found"`
+	Expected int `json:"expected"`
 }
 
 // ScoreRetrieval checks the retrieved chunks against the expected sources. A
@@ -40,13 +40,13 @@ func ScoreRetrieval(sources []Source, matches []store.ChunkMatch) RetrievalResul
 
 // RetrievalSummary aggregates RetrievalResults over a set of questions.
 type RetrievalSummary struct {
-	Questions int
+	Questions int `json:"questions"`
 	// Recall is the average share of expected pages found: whether the
 	// model was given the information it needs.
-	Recall float64
+	Recall float64 `json:"recall"`
 	// MRR (mean reciprocal rank) is the average of 1/Rank, counting 0 for
 	// misses: how close to the top the first relevant chunk was.
-	MRR float64
+	MRR float64 `json:"mrr"`
 }
 
 // SummarizeRetrieval averages per question, so every question weighs the

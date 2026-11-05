@@ -18,7 +18,12 @@ var ErrJudgeReply = errors.New("eval: unreadable judge reply")
 //go:embed prompts/judge_v1.tmpl
 var judgeFS embed.FS
 
-var judgeTmpl = template.Must(template.ParseFS(judgeFS, "prompts/judge_v1.tmpl"))
+// JudgeVersion names the judge template in use; eval reports record it.
+// The go:embed line above must name the same file, since it cannot read a
+// constant.
+const JudgeVersion = "judge_v1"
+
+var judgeTmpl = template.Must(template.ParseFS(judgeFS, "prompts/"+JudgeVersion+".tmpl"))
 
 // Judge uses a chat model to decide whether a generated answer says the same
 // thing as the reference answer. This scales to many questions where exact

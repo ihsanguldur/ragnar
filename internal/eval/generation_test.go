@@ -49,12 +49,13 @@ func TestSummarizeGeneration(t *testing.T) {
 			Expected: 1}},
 	})
 	want := GenerationSummary{
-		Questions:        4,
-		Accuracy:         0.25,
-		Refused:          0.25,
-		CitationRecall:   0.5,
-		InvalidCitations: 2,
-		JudgeErrors:      1,
+		Questions:         4,
+		Accuracy:          0.25,
+		Refused:           0.25,
+		CitationRecall:    0.5,
+		CitationQuestions: 3,
+		InvalidCitations:  2,
+		JudgeErrors:       1,
 	}
 	if got != want {
 		t.Errorf("got %+v, want %+v", got, want)

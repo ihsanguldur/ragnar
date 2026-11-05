@@ -40,11 +40,14 @@ func main() {
 // followed by recall and MRR per question type. Unless -retrieval-only is
 // set, it then answers every question and has a judge model grade the
 // answers. Settings such as top_k or chunk_size are changed with the usual
-// RAGNAR_ environment variables.
+// RAGNAR_ environment variables. The results and the settings are saved as a
+// JSON report, so runs can be compared later.
 func run() error {
 	goldenPath := flag.String("golden", "evals/golden.yaml", "golden question set")
 	docsDir := flag.String("docs", "evals/docs", "directory with the PDFs to ingest")
 	retrievalOnly := flag.Bool("retrieval-only", false, "skip answer generation and grading")
+	label := flag.String("label", "run", "short name for the run, used in the report file name")
+	resultsDir := flag.String("results", "evals/results", "directory to save the JSON report in")
 	flag.Parse()
 
 	cfg, err := config.Load("config.yaml")
@@ -54,6 +57,24 @@ func run() error {
 	questions, err := eval.LoadGolden(*goldenPath)
 	if err != nil {
 		return err
+	}
+
+	// The report is filled in as the run goes; the judge settings are added
+	// only if answers are graded.
+	report := eval.Report{
+		Label:     *label,
+		CreatedAt: time.Now(),
+		Config: eval.Config{
+			ChatModel:    cfg.Ollama.ChatModel,
+			Temperature:  cfg.Chat.Temperature,
+			AnswerPrompt: rag.PromptVersion,
+			EmbedModel:   cfg.Ollama.EmbedModel,
+			TopK:         cfg.Search.TopK,
+			ChunkSize:    cfg.Ingest.ChunkSize,
+			ChunkOverlap: cfg.Ingest.ChunkOverlap,
+		},
+		Retrieval: make(map[string]eval.RetrievalSummary),
+		Questions: make([]eval.QuestionReport, len(questions)),
 	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -92,7 +113,10 @@ func run() error {
 	fmt.Fprintln(tw, "ID\tTYPE\tRANK\tPAGES\tTOP RESULT")
 	byType := make(map[eval.QuestionType][]eval.RetrievalResult)
 	var all []eval.RetrievalResult
-	for _, q := range questions {
+	for i, q := range questions {
+		// Every question gets an entry, so generation results can be added
+		// to unanswerable ones too.
+		report.Questions[i] = eval.QuestionReport{ID: q.ID, Type: q.Type}
 		// Unanswerable questions have no expected source, so retrieval
 		// metrics do not apply to them.
 		if q.Type == eval.TypeUnanswerable {
@@ -105,6 +129,7 @@ func run() error {
 		r := eval.ScoreRetrieval(q.Sources, matches)
 		byType[q.Type] = append(byType[q.Type], r)
 		all = append(all, r)
+		report.Questions[i].Retrieval = &r
 
 		top := "-"
 		if len(matches) > 0 {
@@ -122,15 +147,17 @@ func run() error {
 	fmt.Fprintln(tw, "TYPE\tQUESTIONS\tRECALL\tMRR")
 	for _, t := range []eval.QuestionType{eval.TypeFact, eval.TypeMulti} {
 		s := eval.SummarizeRetrieval(byType[t])
+		report.Retrieval[string(t)] = s
 		fmt.Fprintf(tw, "%s\t%d\t%.3f\t%.3f\n", t, s.Questions, s.Recall, s.MRR)
 	}
 	s := eval.SummarizeRetrieval(all)
+	report.Retrieval["all"] = s
 	fmt.Fprintf(tw, "all\t%d\t%.3f\t%.3f\n", s.Questions, s.Recall, s.MRR)
 	if err := tw.Flush(); err != nil {
 		return err
 	}
 	if *retrievalOnly {
-		return nil
+		return saveReport(*resultsDir, report)
 	}
 
 	// The judge runs on the same model that wrote the answers, which can make
@@ -138,7 +165,25 @@ func run() error {
 	fmt.Printf("\ngeneration: chat_model=%s temperature=%.1f judge=%s (thinking, same model as chat)\n\n", cfg.Ollama.ChatModel, cfg.Chat.Temperature, cfg.Ollama.ChatModel)
 	provider := llm.NewOllama(cfg.Ollama.URL, cfg.Ollama.ChatModel, cfg.Ollama.NumCtx)
 	svc := rag.NewService(retriever, provider, cfg.Chat.Temperature, cfg.Chat.MaxTokens)
-	return runGeneration(ctx, questions, svc, eval.NewJudge(provider))
+	report.Config.JudgeModel = cfg.Ollama.ChatModel
+	report.Config.JudgePrompt = eval.JudgeVersion
+	summaries, err := runGeneration(ctx, questions, report.Questions, svc, eval.NewJudge(provider))
+	if err != nil {
+		return err
+	}
+	report.Generation = summaries
+	return saveReport(*resultsDir, report)
+}
+
+// saveReport is only reached when the run finished, so an interrupted or
+// failed run never leaves a partial report that looks complete.
+func saveReport(dir string, r eval.Report) error {
+	path, err := eval.SaveReport(dir, r)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("\nreport saved to %s\n", path)
+	return nil
 }
 
 // createTempDB creates an empty database next to the configured one, so an
