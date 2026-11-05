@@ -23,8 +23,13 @@ type ChatRequest struct {
 	// answers.
 	Temperature float64
 	// MaxTokens caps the length of the reply, so a runaway generation cannot
-	// hold the model indefinitely.
+	// hold the model indefinitely. For reasoning models it also counts the
+	// thinking tokens.
 	MaxTokens int
+	// Think lets a reasoning model such as qwen3 reason before it replies.
+	// It is slower but more accurate on judgement tasks; the reasoning is not
+	// part of the reply content.
+	Think bool
 }
 
 type ChatResponse struct {

@@ -1,5 +1,9 @@
+# Local infrastructure. Only the database runs in a container; Ollama runs on
+# the host so it can use the GPU directly. Values come from .env (copy
+# .env.example to get started); the application itself reads config.yaml.
 services:
   postgres:
+    # Postgres with the pgvector extension preinstalled.
     image: pgvector/pgvector:0.8.1-pg18
     restart: unless-stopped
     environment:
@@ -9,7 +13,9 @@ services:
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
+      # Named volume, so data survives container re-creation.
       - pgdata:/var/lib/postgresql
+      # Scripts here run once, when the data volume is empty.
       - ./db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]

@@ -22,11 +22,16 @@ var promptFS embed.FS
 // model when retrieval finds nothing.
 const NoAnswer = "There is no information in documents."
 
+// PromptVersion names the answer template in use; eval reports record it.
+// The go:embed line above must name the same file, since it cannot read a
+// constant.
+const PromptVersion = "answer_v1"
+
 // answerTmpl is parsed once at startup; Must panics on a broken template, so
 // a mistake in the file stops the program immediately instead of failing on
 // the first request. text/template is used rather than html/template because
 // the output is a prompt, not HTML, and must not be escaped.
-var answerTmpl = template.Must(template.ParseFS(promptFS, "prompts/answer_v1.tmpl"))
+var answerTmpl = template.Must(template.ParseFS(promptFS, "prompts/"+PromptVersion+".tmpl"))
 
 // Source is a retrieved chunk as shown to the model. Number is its position
 // in the prompt, starting at 1, which the model cites as [Number].

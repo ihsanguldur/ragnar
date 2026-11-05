@@ -37,6 +37,9 @@ type Answer struct {
 	Model   string
 	Usage   llm.Usage
 	Sources []Source
+	// InvalidCitations counts [n] markers that point to no source in the
+	// prompt; they are left out of Sources.
+	InvalidCitations int
 }
 
 // Ask answers question, passing each piece of generated text to onToken as it
@@ -71,27 +74,35 @@ func (s *Service) Ask(ctx context.Context, question string, onToken func(text st
 		return Answer{}, fmt.Errorf("%w: %w", ErrGenerate, err)
 	}
 
+	cited, invalid := citedSources(resp.Content, prompt.Sources)
 	return Answer{
-		Text:    resp.Content,
-		Sources: citedSources(resp.Content, prompt.Sources),
-		Model:   resp.Model,
-		Usage:   resp.Usage,
+		Text:             resp.Content,
+		Sources:          cited,
+		Model:            resp.Model,
+		Usage:            resp.Usage,
+		InvalidCitations: invalid,
 	}, nil
 }
 
-// citedSources returns the sources text cites with [n] markers, each once.
-// Numbers outside the prompt's sources are invented by the model and are
-// dropped. The result is never nil, so it encodes as [] in JSON.
-func citedSources(text string, sources []Source) []Source {
+// citedSources returns the sources text cites with [n] markers, each once,
+// and how many markers point outside the prompt's sources. Those numbers are
+// invented by the model and are dropped. The result is never nil, so it
+// encodes as [] in JSON.
+func citedSources(text string, sources []Source) ([]Source, int) {
 	cited := []Source{}
+	invalid := 0
 	seen := make(map[int]bool)
 	for _, m := range citationRe.FindAllStringSubmatch(text, -1) {
 		n, err := strconv.Atoi(m[1])
-		if err != nil || n < 1 || n > len(sources) || seen[n] {
+		if err != nil || n < 1 || n > len(sources) {
+			invalid++
+			continue
+		}
+		if seen[n] {
 			continue
 		}
 		seen[n] = true
 		cited = append(cited, sources[n-1])
 	}
-	return cited
+	return cited, invalid
 }

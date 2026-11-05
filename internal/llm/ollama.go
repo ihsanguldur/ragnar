@@ -129,9 +129,7 @@ func (o *Ollama) send(ctx context.Context, req ChatRequest, stream bool) (*http.
 		Model:    o.model,
 		Messages: req.Messages,
 		Stream:   stream,
-		// Reasoning models such as qwen3 otherwise write a long hidden
-		// reasoning section before answering, which adds latency and tokens.
-		Think: false,
+		Think:    req.Think,
 		Options: ollamaOptions{
 			Temperature: req.Temperature,
 			NumPredict:  req.MaxTokens,

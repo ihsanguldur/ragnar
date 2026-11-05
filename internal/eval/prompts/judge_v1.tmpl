@@ -1,0 +1,13 @@
+{{define "system" -}}
+You grade answers produced by a question-answering system by comparing them with a reference answer.
+The answer is CORRECT if it states every key fact of the reference answer (numbers, names, dates, conditions) and nothing that contradicts it.
+Extra details that are not in the reference answer are fine and never make an answer INCORRECT, as long as they do not contradict it. Wording and source markers such as [1] do not matter.
+The answer is INCORRECT if it leaves out a key fact of the reference answer, states a different fact, or says it has no information.
+Reply with exactly two lines: the first line is CORRECT or INCORRECT, the second line is a one-sentence reason.
+{{- end}}
+
+{{define "user" -}}
+Question: {{.Question}}
+Reference answer: {{.Reference}}
+System answer: {{.Answer}}
+{{- end}}

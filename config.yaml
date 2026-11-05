@@ -1,10 +1,19 @@
+# Runtime configuration. Any key can be overridden with an environment
+# variable: RAGNAR_ + the key path in upper case, dots as underscores.
+# Example: RAGNAR_SEARCH_TOP_K=3 overrides search.top_k.
+
 http:
   addr: ":8080"
 
 ollama:
   url: http://localhost:11434
   chat_model: qwen3:8b
+  # Must match the model the stored chunks were embedded with; changing it
+  # requires re-ingesting the documents.
   embed_model: bge-m3
+  # Context window of the chat model in tokens (prompt + reply). Larger
+  # windows need more GPU memory; at 6144 the chat and embedding models both
+  # fit in 8 GB of VRAM, so neither has to be reloaded between requests.
   num_ctx: 6144
 
 database:
@@ -13,21 +22,32 @@ database:
 ingest:
   upload_dir: data/uploads
   max_upload_mb: 50
+  # Documents processed in parallel.
   workers: 2
+  # How often an idle worker checks the queue.
   poll_interval: 2s
   extract_timeout: 2m
+  # Chunk size and overlap in characters. Changing them only affects
+  # documents ingested afterwards.
   chunk_size: 1600
   chunk_overlap: 200
+  # Chunks sent to the embedding model per request.
   embed_batch_size: 16
   embed_timeout: 1m
+  # Embedding failures are retried after retry_backoff, doubling each time,
+  # until max_attempts is reached.
   max_attempts: 5
   retry_backoff: 30s
 
 chat:
+  # Limit for a whole /ask request, including the streamed answer.
   timeout: 60s
+  # Maximum reply length in tokens.
   max_tokens: 1024
+  # Low temperature keeps answers close to the sources.
   temperature: 0.2
 
 search:
+  # Chunks returned per search; /ask gives the model this many sources.
   top_k: 5
   timeout: 10s
