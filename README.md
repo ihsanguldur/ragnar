@@ -36,7 +36,7 @@ sequenceDiagram
         L-->>S: token
         S-->>C: SSE: token
     end
-    S-->>C: SSE: sources [S1] contract.pdf p.4
+    S-->>C: SSE: sources [A] contract.pdf p.4
 ```
 
 ## Stack

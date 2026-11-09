@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
-	"strconv"
 
 	"github.com/ihsanguldur/ragnar/internal/llm"
 	"github.com/ihsanguldur/ragnar/internal/retrieval"
@@ -14,10 +13,10 @@ import (
 // ErrGenerate wraps failures of the chat model call.
 var ErrGenerate = errors.New("rag: generate answer")
 
-// citationRe matches citation markers such as [S2] and captures the number.
-// A bare [2] is not a citation: it is usually a heading number the model
-// copied from a document.
-var citationRe = regexp.MustCompile(`\[S(\d+)\]`)
+// citationRe matches citation markers such as [B] and captures the letter.
+// A bracketed number such as [2] is not a citation: it is usually a heading
+// number the model copied from a document.
+var citationRe = regexp.MustCompile(`\[([A-Z])\]`)
 
 // Service answers questions from the ingested documents:
 // retrieve, build the prompt, generate, then map citations.
@@ -39,7 +38,7 @@ type Answer struct {
 	Model   string
 	Usage   llm.Usage
 	Sources []Source
-	// InvalidCitations counts [Sn] markers that point to no source in the
+	// InvalidCitations counts [X] markers that point to no source in the
 	// prompt; they are left out of Sources.
 	InvalidCitations int
 }
@@ -86,8 +85,8 @@ func (s *Service) Ask(ctx context.Context, question string, onToken func(text st
 	}, nil
 }
 
-// citedSources returns the sources text cites with [Sn] markers, each once,
-// and how many markers point outside the prompt's sources. Those numbers are
+// citedSources returns the sources text cites with [X] markers, each once,
+// and how many markers point outside the prompt's sources. Those letters are
 // invented by the model and are dropped. The result is never nil, so it
 // encodes as [] in JSON.
 func citedSources(text string, sources []Source) ([]Source, int) {
@@ -95,8 +94,10 @@ func citedSources(text string, sources []Source) ([]Source, int) {
 	invalid := 0
 	seen := make(map[int]bool)
 	for _, m := range citationRe.FindAllStringSubmatch(text, -1) {
-		n, err := strconv.Atoi(m[1])
-		if err != nil || n < 1 || n > len(sources) {
+		// The regexp only matches A-Z, so the index is never negative;
+		// "A" is source 0.
+		n := int(m[1][0] - 'A')
+		if n >= len(sources) {
 			invalid++
 			continue
 		}
@@ -104,7 +105,7 @@ func citedSources(text string, sources []Source) ([]Source, int) {
 			continue
 		}
 		seen[n] = true
-		cited = append(cited, sources[n-1])
+		cited = append(cited, sources[n])
 	}
 	return cited, invalid
 }

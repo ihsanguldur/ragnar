@@ -17,10 +17,10 @@ type AskRequest struct {
 	Question string `json:"question"`
 }
 
-// AskSource is a source the answer cites. Number matches the [Sn] markers in
-// the answer text.
+// AskSource is a source the answer cites. Label matches the [X] markers in
+// the answer text, so "B" is the source cited as [B].
 type AskSource struct {
-	Number     int     `json:"number"`
+	Label      string  `json:"label"`
 	DocumentID string  `json:"document_id"`
 	Filename   string  `json:"filename"`
 	PageStart  int     `json:"page_start"`
@@ -95,7 +95,7 @@ func (h *Handler) Ask(w http.ResponseWriter, r *http.Request) {
 	sources := make([]AskSource, 0, len(answer.Sources))
 	for _, s := range answer.Sources {
 		sources = append(sources, AskSource{
-			Number:     s.Number,
+			Label:      s.Label,
 			DocumentID: s.DocumentID,
 			Filename:   s.Filename,
 			PageStart:  s.PageStart,
