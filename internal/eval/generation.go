@@ -26,8 +26,11 @@ type GenerationResult struct {
 
 // IsRefusal reports whether the model gave the no-answer sentence. The
 // prompt asks for that exact sentence, so anything else counts as an answer.
+// The reply must start with it: a made-up answer that ends with the sentence
+// is still an answer, and has to be graded as one rather than hidden as a
+// refusal.
 func IsRefusal(text string) bool {
-	return strings.Contains(text, rag.NoAnswer)
+	return strings.HasPrefix(strings.TrimSpace(text), rag.NoAnswer)
 }
 
 // ScoreCitations checks the sources an answer cites against the expected
