@@ -1,0 +1,1127 @@
+{
+ "label": "letters",
+ "created_at": "2026-11-09T16:17:04.410313358+03:00",
+ "config": {
+  "chat_model": "qwen3:8b",
+  "temperature": 0.2,
+  "answer_prompt": "answer_v3",
+  "embed_model": "bge-m3",
+  "top_k": 5,
+  "chunk_size": 1600,
+  "chunk_overlap": 200,
+  "judge_model": "qwen3:8b",
+  "judge_prompt": "judge_v1"
+ },
+ "retrieval": {
+  "all": {
+   "questions": 44,
+   "recall": 1,
+   "mrr": 0.9734848484848484
+  },
+  "fact": {
+   "questions": 41,
+   "recall": 1,
+   "mrr": 0.9715447154471544
+  },
+  "multi": {
+   "questions": 3,
+   "recall": 1,
+   "mrr": 1
+  }
+ },
+ "generation": {
+  "fact": {
+   "questions": 41,
+   "accuracy": 0.926829268292683,
+   "refused": 0,
+   "citation_recall": 0.975609756097561,
+   "citation_questions": 41,
+   "invalid_citations": 0,
+   "judge_errors": 0
+  },
+  "multi": {
+   "questions": 3,
+   "accuracy": 1,
+   "refused": 0,
+   "citation_recall": 1,
+   "citation_questions": 3,
+   "invalid_citations": 0,
+   "judge_errors": 0
+  },
+  "unanswerable": {
+   "questions": 6,
+   "accuracy": 1,
+   "refused": 1,
+   "citation_recall": 0,
+   "citation_questions": 0,
+   "invalid_citations": 0,
+   "judge_errors": 0
+  }
+ },
+ "questions": [
+  {
+   "id": "h01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Atlas Software was founded in 2011 [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the founding year of Atlas Software as 2011, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Atlas Software Inc. currently has 340 employees [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the number of employees (340) matching the reference answer, with no contradictory information.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The orientation program lasts three working days [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the duration of the orientation program as three working days, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The core working hours are from 10:00 to 16:00 [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the core working hours as 10:00 to 16:00, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h05",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Approved overtime is paid in the payroll at the hourly wage plus fifty percent [A].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer omits the alternative compensation method of one and a half hours of time off.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h06",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "18 working days [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the exact number of annual leave days (18 working days) provided in the reference answer without adding or omitting key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h07",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "24 working days [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the exact key fact from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h08",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Yes, up to 5 days of unused annual leave may be carried over to the next year [A].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer omits the critical detail that carried-over days are forfeited if not used by March 31.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h09",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Paternity leave is 10 working days [A][B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 10 working days duration as specified in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h10",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Remote work is not allowed on Tuesday [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly identifies Tuesday as the day remote work is not allowed, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h11",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "An employee may work remotely from abroad for a total of at most 30 days per year [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the maximum of 30 days per year without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h12",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The home office allowance for remote workers is 1,200 TL per month, paid together with the salary, on the condition that the employee worked remotely for at least 8 days in that month [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 1,200 TL amount and the 8-day condition without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h13",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The yearly limit for dental treatment under the health insurance is 6,000 TL [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the yearly limit of 6,000 TL without adding or omitting key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h14",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Yes, glasses and contact lens expenses are covered up to 2,500 TL once every two years [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes all key facts from the reference answer without contradictions or omissions.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h15",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The staff shuttle serves the Karsiyaka, Bornova and Buca routes [B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly lists all the specified routes (Karsiyaka, Bornova, Buca) without contradiction.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h16",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The gym membership allowance is 750 TL monthly [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the gym membership allowance as 750 TL monthly, matching the reference answer's key fact.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h17",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Laptops are replaced every 3 years [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the replacement frequency of 3 years as in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h18",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The company covers taxi costs for employees leaving the office after 23:00 [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the time (23:00) from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h19",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The performance bonus is set between 0 and 20 percent of the employee's gross monthly salary and is paid with the February salary [B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes all key facts from the reference answer without contradiction.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h20",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Promotion decisions are announced only in January, after the December review [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the key fact (January) and adds non-contradictory details about the December review.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h21",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The notice period for an employee with more than three years of service is 8 weeks [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 8-week notice period as specified in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h22",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The email address of the Human Resources department is hr@atlassoftware.example [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly provides the exact email address from the reference answer without contradictions or omissions.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The monthly rent is 32,500 TL, and it is due by the 5th of each month [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states both the rent amount (32,500 TL) and the due date (5th of each month) without adding or omitting key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "A late fee of five per thousand of the monthly rent is charged for each day of delay [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately replicates all key facts from the reference answer without contradictions or omissions.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The apartment is located in the Bostanli neighborhood of the Karsiyaka district of Izmir, and it is 125 square meters in size [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the location and size as specified in the reference answer without adding contradictory information.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The lease starts on September 1, 2026, and it lasts one year [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes both the start date and duration exactly as stated in the reference answer without contradictions or omissions.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l05",
+   "type": "fact",
+   "retrieval": {
+    "rank": 3,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The deposit is equal to two months' rent, that is, 65,000 TL. The deposit is returned to the tenant within 30 days of moving out, provided that the premises are handed over undamaged at the end of the agreement and all debts have been paid [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the deposit amount (65,000 TL) and the return timeline (30 days) as per the reference answer, with additional conditions that do not contradict the key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l06",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "No, the tenant may not keep pets on the premises [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the prohibition on pets without contradicting the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l07",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Next year's rent hike will be determined by the twelve-month average of the consumer price index (CPI) for the previous lease year, and the increase rate may not exceed legal limits [A][B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the CPI-based method from the reference and adds non-contradictory details about legal limits.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l08",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The building maintenance fee is paid by the landlord [B].",
+    "correct": false,
+    "refused": false,
+    "reason": "The reference answer states the tenant pays, but the system answer incorrectly attributes payment to the landlord.",
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l09",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The tenant must give the landlord written notice at least 2 months in advance [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the required 2-month written notice period without contradicting or omitting key facts from the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The Nimbus Backup Professional plan supports up to 25 devices [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The answer correctly states the key fact about supporting up to 25 devices, which matches the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "No, Nimbus Backup does not support backup for mobile devices [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states that Nimbus Backup does not support mobile devices, matching the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The backups are stored in data centers located in Frankfurt and Amsterdam [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the data centers in Frankfurt and Amsterdam as specified in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 2,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "A pairing code is valid for 24 hours after it is generated [E].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 24-hour validity period without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b05",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "A red agent icon means that no successful backup has been taken in the last 72 hours [B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the key fact from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b06",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The most frequent backup setting in the Starter plan is once an hour [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the most frequent backup setting in the Starter plan as \"once an hour,\" matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b07",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The maximum size of a single file that can be backed up is 50 GB [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the maximum file size as 50 GB, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b08",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Older file versions are kept for 90 days in the Professional plan [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the 90-day retention period for older file versions in the Professional plan, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b09",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The data can still be downloaded for 14 days after a subscription is canceled [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 14-day period mentioned in the reference answer without adding contradictory information.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b10",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The customer is given a service credit equal to 10 percent of that month's subscription fee. [A]",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 10% service credit without contradicting the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "m01",
+   "type": "multi",
+   "retrieval": {
+    "rank": 1,
+    "found": 2,
+    "expected": 2
+   },
+   "generation": {
+    "answer": "The training budget is 15,000 TL per person per year. If the training or certification costs more than 10,000 TL, the employee commits to working at the company for at least 12 months after the training ends [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes all key facts from the reference answer without contradictions or omissions.",
+    "citations": {
+     "rank": 1,
+     "found": 2,
+     "expected": 2
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "m02",
+   "type": "multi",
+   "retrieval": {
+    "rank": 1,
+    "found": 2,
+    "expected": 2
+   },
+   "generation": {
+    "answer": "An employee gets 5 working days of leave when they marry [B]. They can add their spouse to the health insurance during the January renewal period, and marriage is an exception to this rule and is processed during the policy period if it is reported within 30 days of the event [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes the key facts (5 working days of leave and 30-day reporting window for adding spouse to health insurance) and adds non-contradictory details about the policy period.",
+    "citations": {
+     "rank": 1,
+     "found": 2,
+     "expected": 2
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "m03",
+   "type": "multi",
+   "retrieval": {
+    "rank": 1,
+    "found": 2,
+    "expected": 2
+   },
+   "generation": {
+    "answer": "The Nimbus Starter plan offers 500 GB of storage [A], and it keeps older file versions for 30 days [B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states both the 500 GB storage and the 30-day retention period without contradiction.",
+    "citations": {
+     "rank": 1,
+     "found": 2,
+     "expected": 2
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u01",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "There is no information in documents.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u02",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "There is no information in documents.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u03",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "There is no information in documents.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u04",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "There is no information in documents.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u05",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "There is no information in documents.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u06",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "There is no information in documents.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  }
+ ]
+}

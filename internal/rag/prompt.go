@@ -14,7 +14,7 @@ import (
 // read and changed as plain text. The version in the file name lets
 // different wordings be compared side by side.
 //
-//go:embed prompts/answer_v2.tmpl
+//go:embed prompts/answer_v3.tmpl
 var promptFS embed.FS
 
 // NoAnswer is the exact sentence the model is told to reply with when the
@@ -25,7 +25,7 @@ const NoAnswer = "There is no information in documents."
 // PromptVersion names the answer template in use; eval reports record it.
 // The go:embed line above must name the same file, since it cannot read a
 // constant.
-const PromptVersion = "answer_v2"
+const PromptVersion = "answer_v3"
 
 // answerTmpl is parsed once at startup; Must panics on a broken template, so
 // a mistake in the file stops the program immediately instead of failing on
@@ -33,10 +33,13 @@ const PromptVersion = "answer_v2"
 // the output is a prompt, not HTML, and must not be escaped.
 var answerTmpl = template.Must(template.ParseFS(promptFS, "prompts/"+PromptVersion+".tmpl"))
 
-// Source is a retrieved chunk as shown to the model. Number is its position
-// in the prompt, starting at 1, which the model cites as [S<Number>].
+// Source is a retrieved chunk as shown to the model. Label is a letter for
+// its position in the prompt, starting at "A", which the model cites as
+// [Label]. Letters are used because the documents have numbered headings
+// such as "Article 7", and the model cited those numbers when sources were
+// labeled [1] or even [S1].
 type Source struct {
-	Number     int
+	Label      string
 	DocumentID string
 	Filename   string
 	PageStart  int
@@ -45,7 +48,7 @@ type Source struct {
 	Content    string
 }
 
-// Prompt is the chat messages to send and the numbered sources they contain,
+// Prompt is the chat messages to send and the labeled sources they contain,
 // kept so that citations in the reply can be mapped back.
 type Prompt struct {
 	Messages []llm.Message
@@ -53,13 +56,18 @@ type Prompt struct {
 }
 
 // BuildPrompt renders the system message, which holds the answering rules,
-// and the user message, which holds the numbered sources and the question.
-// Sources are numbered in retrieval order, so [S1] is the best match.
+// and the user message, which holds the labeled sources and the question.
+// Sources are labeled in retrieval order, so [A] is the best match. There
+// are only 26 letters, so more matches than that is an error; top_k is far
+// below it.
 func BuildPrompt(question string, matches []store.ChunkMatch) (Prompt, error) {
+	if len(matches) > 26 {
+		return Prompt{}, fmt.Errorf("rag: %d sources, at most 26 can be labeled", len(matches))
+	}
 	sources := make([]Source, len(matches))
 	for i, m := range matches {
 		sources[i] = Source{
-			Number:     i + 1,
+			Label:      string(rune('A' + i)),
 			DocumentID: m.DocumentID,
 			Filename:   m.Filename,
 			PageStart:  m.PageStart,
