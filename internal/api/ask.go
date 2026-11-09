@@ -17,7 +17,7 @@ type AskRequest struct {
 	Question string `json:"question"`
 }
 
-// AskSource is a source the answer cites. Number matches the [n] markers in
+// AskSource is a source the answer cites. Number matches the [Sn] markers in
 // the answer text.
 type AskSource struct {
 	Number     int     `json:"number"`
