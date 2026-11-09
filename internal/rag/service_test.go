@@ -25,7 +25,7 @@ func TestCitedSources(t *testing.T) {
 		// 'a' - 'A' is 32, so a lowercase letter must never reach the
 		// index arithmetic.
 		{"lowercase is not a citation", "One [a].", []string{}, 0},
-		{"no citations", "There is no information in documents.", []string{}, 0},
+		{"no citations", NoAnswer, []string{}, 0},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

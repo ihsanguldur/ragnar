@@ -14,18 +14,18 @@ import (
 // read and changed as plain text. The version in the file name lets
 // different wordings be compared side by side.
 //
-//go:embed prompts/answer_v4.tmpl
+//go:embed prompts/answer_v5.tmpl
 var promptFS embed.FS
 
 // NoAnswer is the exact sentence the model is told to reply with when the
 // sources do not answer the question. It is also returned without calling the
 // model when retrieval finds nothing.
-const NoAnswer = "There is no information in documents."
+const NoAnswer = "The documents do not contain this information."
 
 // PromptVersion names the answer template in use; eval reports record it.
 // The go:embed line above must name the same file, since it cannot read a
 // constant.
-const PromptVersion = "answer_v4"
+const PromptVersion = "answer_v5"
 
 // answerTmpl is parsed once at startup; Must panics on a broken template, so
 // a mistake in the file stops the program immediately instead of failing on

@@ -3,6 +3,8 @@ package eval
 import (
 	"errors"
 	"testing"
+
+	"github.com/ihsanguldur/ragnar/internal/rag"
 )
 
 func TestParseVerdict(t *testing.T) {
@@ -59,5 +61,25 @@ func TestSummarizeGeneration(t *testing.T) {
 	}
 	if got != want {
 		t.Errorf("got %+v, want %+v", got, want)
+	}
+}
+
+// TestIsRefusal covers surrounding whitespace, a normal answer, and the case
+// seen with a Turkish question: a made-up answer that ends with the
+// no-answer sentence, which must not count as a refusal.
+func TestIsRefusal(t *testing.T) {
+	tests := []struct {
+		text string
+		want bool
+	}{
+		{rag.NoAnswer, true},
+		{"  " + rag.NoAnswer + "\n", true},
+		{"Employees get 18 days of sick leave [A]. " + rag.NoAnswer, false},
+		{"Rent is 32,500 TL [A].", false},
+	}
+	for _, tt := range tests {
+		if got := IsRefusal(tt.text); got != tt.want {
+			t.Errorf("IsRefusal(%q) = %v, want %v", tt.text, got, tt.want)
+		}
 	}
 }
