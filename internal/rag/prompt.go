@@ -14,7 +14,7 @@ import (
 // read and changed as plain text. The version in the file name lets
 // different wordings be compared side by side.
 //
-//go:embed prompts/answer_v1.tmpl
+//go:embed prompts/answer_v2.tmpl
 var promptFS embed.FS
 
 // NoAnswer is the exact sentence the model is told to reply with when the
@@ -25,7 +25,7 @@ const NoAnswer = "There is no information in documents."
 // PromptVersion names the answer template in use; eval reports record it.
 // The go:embed line above must name the same file, since it cannot read a
 // constant.
-const PromptVersion = "answer_v1"
+const PromptVersion = "answer_v2"
 
 // answerTmpl is parsed once at startup; Must panics on a broken template, so
 // a mistake in the file stops the program immediately instead of failing on
@@ -34,7 +34,7 @@ const PromptVersion = "answer_v1"
 var answerTmpl = template.Must(template.ParseFS(promptFS, "prompts/"+PromptVersion+".tmpl"))
 
 // Source is a retrieved chunk as shown to the model. Number is its position
-// in the prompt, starting at 1, which the model cites as [Number].
+// in the prompt, starting at 1, which the model cites as [S<Number>].
 type Source struct {
 	Number     int
 	DocumentID string
@@ -54,7 +54,7 @@ type Prompt struct {
 
 // BuildPrompt renders the system message, which holds the answering rules,
 // and the user message, which holds the numbered sources and the question.
-// Sources are numbered in retrieval order, so [1] is the best match.
+// Sources are numbered in retrieval order, so [S1] is the best match.
 func BuildPrompt(question string, matches []store.ChunkMatch) (Prompt, error) {
 	sources := make([]Source, len(matches))
 	for i, m := range matches {

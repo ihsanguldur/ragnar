@@ -31,12 +31,12 @@ sequenceDiagram
     L-->>S: vector
     S->>DB: nearest chunks (vector + full-text)
     DB-->>S: top-k chunks with document/page
-    S->>L: prompt = instructions + numbered sources + question
+    S->>L: prompt = instructions + labeled sources + question
     loop streaming
         L-->>S: token
         S-->>C: SSE: token
     end
-    S-->>C: SSE: sources [1] contract.pdf p.4
+    S-->>C: SSE: sources [S1] contract.pdf p.4
 ```
 
 ## Stack
