@@ -66,6 +66,18 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	goldenHash, err := hashFiles([]string{*goldenPath})
+	if err != nil {
+		return err
+	}
+	docPaths, err := filepath.Glob(filepath.Join(*docsDir, "*.pdf"))
+	if err != nil {
+		return err
+	}
+	docsHash, err := hashFiles(docPaths)
+	if err != nil {
+		return err
+	}
 
 	// The report is filled in as the run goes; the judge settings are added
 	// only if answers are graded.
@@ -80,6 +92,8 @@ func run() error {
 			TopK:         cfg.Search.TopK,
 			ChunkSize:    cfg.Ingest.ChunkSize,
 			ChunkOverlap: cfg.Ingest.ChunkOverlap,
+			GoldenSHA256: goldenHash,
+			DocsSHA256:   docsHash,
 		},
 		Retrieval: make(map[string]eval.RetrievalSummary),
 		Questions: make([]eval.QuestionReport, len(questions)),
@@ -149,11 +163,16 @@ func run() error {
 	tw.Flush()
 
 	fmt.Printf("\nretrieval: top_k=%d chunk_size=%d chunk_overlap=%d embed_model=%s\n", cfg.Search.TopK, cfg.Ingest.ChunkSize, cfg.Ingest.ChunkOverlap, cfg.Ollama.EmbedModel)
-	// The types are listed explicitly rather than read from the map, whose
+	// The types come from eval.Types rather than from the map, whose
 	// iteration order is random, so the rows always come out in this order.
+	// Types without questions, such as unanswerable ones here, are skipped
+	// and left out of the report.
 	tw = tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(tw, "TYPE\tQUESTIONS\tRECALL\tMRR")
-	for _, t := range []eval.QuestionType{eval.TypeFact, eval.TypeMulti} {
+	for _, t := range eval.Types {
+		if len(byType[t]) == 0 {
+			continue
+		}
 		s := eval.SummarizeRetrieval(byType[t])
 		report.Retrieval[string(t)] = s
 		fmt.Fprintf(tw, "%s\t%d\t%.3f\t%.3f\n", t, s.Questions, s.Recall, s.MRR)
@@ -303,4 +322,22 @@ func ingestDocs(ctx context.Context, st *store.Store, em embed.Embedder, cfg con
 		case <-time.After(500 * time.Millisecond):
 		}
 	}
+}
+
+// hashFiles returns a short SHA-256 over the names and contents of paths, in
+// the order given; filepath.Glob already returns them sorted. Each file's
+// name and length go in before its content, so moving bytes from one file
+// to the next, or renaming a file, changes the hash too. Twelve hex
+// characters are enough to tell versions of a set apart.
+func hashFiles(paths []string) (string, error) {
+	h := sha256.New()
+	for _, p := range paths {
+		data, err := os.ReadFile(p)
+		if err != nil {
+			return "", err
+		}
+		fmt.Fprintf(h, "%s\x00%d\x00", filepath.Base(p), len(data))
+		h.Write(data)
+	}
+	return hex.EncodeToString(h.Sum(nil))[:12], nil
 }

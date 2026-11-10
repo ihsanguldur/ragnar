@@ -63,7 +63,12 @@ func runGeneration(ctx context.Context, questions []eval.Question, reports []eva
 	tw = tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(tw, "TYPE\tQUESTIONS\tACCURACY\tREFUSED\tCITATION RECALL\tINVALID CITATIONS\tJUDGE ERRORS")
 	summaries := make(map[string]eval.GenerationSummary)
-	for _, t := range []eval.QuestionType{eval.TypeFact, eval.TypeMulti, eval.TypeUnanswerable} {
+	for _, t := range eval.Types {
+		// A type with no questions in this golden set gets no row, rather
+		// than a row of zeros that would read as all answers being wrong.
+		if len(byType[t]) == 0 {
+			continue
+		}
 		s := eval.SummarizeGeneration(byType[t])
 		summaries[string(t)] = s
 		// "-" rather than 0.000 when no question of this type expects a

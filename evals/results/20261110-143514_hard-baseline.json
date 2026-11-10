@@ -1,0 +1,1615 @@
+{
+ "label": "hard-baseline",
+ "created_at": "2026-11-10T14:35:14.361167296+03:00",
+ "config": {
+  "chat_model": "qwen3:8b",
+  "temperature": 0.2,
+  "answer_prompt": "answer_v5",
+  "embed_model": "bge-m3",
+  "top_k": 5,
+  "chunk_size": 1600,
+  "chunk_overlap": 200,
+  "judge_model": "qwen3:8b",
+  "judge_prompt": "judge_v1",
+  "golden_sha256": "d86de2ad2064",
+  "docs_sha256": "5ddae09e0bcd"
+ },
+ "retrieval": {
+  "all": {
+   "questions": 64,
+   "recall": 1,
+   "mrr": 0.9036458333333334
+  },
+  "fact": {
+   "questions": 55,
+   "recall": 1,
+   "mrr": 0.9090909090909091
+  },
+  "keyword": {
+   "questions": 4,
+   "recall": 1,
+   "mrr": 0.8333333333333334
+  },
+  "multi": {
+   "questions": 5,
+   "recall": 1,
+   "mrr": 0.9
+  }
+ },
+ "generation": {
+  "fact": {
+   "questions": 55,
+   "accuracy": 0.8181818181818182,
+   "refused": 0.03636363636363636,
+   "citation_recall": 0.9245283018867925,
+   "citation_questions": 53,
+   "invalid_citations": 0,
+   "judge_errors": 0
+  },
+  "keyword": {
+   "questions": 4,
+   "accuracy": 0.75,
+   "refused": 0.25,
+   "citation_recall": 1,
+   "citation_questions": 3,
+   "invalid_citations": 0,
+   "judge_errors": 0
+  },
+  "multi": {
+   "questions": 5,
+   "accuracy": 0.4,
+   "refused": 0,
+   "citation_recall": 0.7,
+   "citation_questions": 5,
+   "invalid_citations": 0,
+   "judge_errors": 0
+  },
+  "unanswerable": {
+   "questions": 8,
+   "accuracy": 0.5,
+   "refused": 0.5,
+   "citation_recall": 0,
+   "citation_questions": 0,
+   "invalid_citations": 0,
+   "judge_errors": 0
+  }
+ },
+ "questions": [
+  {
+   "id": "h01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Atlas Software was founded in 2011 [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the founding year of Atlas Software as 2011, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Atlas Software Inc. currently has 340 employees [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the number of employees (340) matching the reference answer, with no contradictory information.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The orientation program at Atlas Software lasts three working days [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the duration of the orientation program as three working days, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The core working hours at Atlas Software are from 10:00 to 16:00 [E].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the core working hours as 10:00 to 16:00, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h05",
+   "type": "fact",
+   "retrieval": {
+    "rank": 2,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Approved overtime is paid in the payroll at the hourly wage plus fifty percent [E].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer omits the alternative compensation method of one and a half hours of time off for each hour worked.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h06",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "18 working days per year [E].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the key fact of 18 working days and adds \"per year\" as an extra detail, which is allowed.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h07",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "24 working days [E].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the exact number of working days (24) from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h08",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Yes, up to 5 days of unused annual leave may be carried over to the next year [E].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer omits the key detail that carried-over days are forfeited if not used by March 31.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h09",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The paternity leave at Atlas Software is 10 working days [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the 10 working days paternity leave as specified in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h10",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Tuesday [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly identifies Tuesday, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h11",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The documents do not contain this information.",
+    "correct": false,
+    "refused": true,
+    "reason": "refused",
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h12",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The home office allowance for remote workers at Atlas Software is 1,200 TL per month, provided that the employee worked remotely for at least 8 days in that month [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 1,200 TL allowance and the 8-day remote work condition without adding or omitting key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h13",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The yearly limit for dental treatment under the Atlas Software health insurance is 6,000 TL [B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the yearly limit of 6,000 TL without contradicting the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h14",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Yes, glasses and contact lens expenses are covered up to 2,500 TL once every two years [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately reflects all key facts from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h15",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The documents do not contain this information.",
+    "correct": false,
+    "refused": true,
+    "reason": "refused",
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h16",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The gym membership allowance is 750 TL per month [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the gym membership allowance as 750 TL per month, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h17",
+   "type": "fact",
+   "retrieval": {
+    "rank": 3,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Laptops are replaced every 3 years [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the replacement frequency of 3 years, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h18",
+   "type": "fact",
+   "retrieval": {
+    "rank": 3,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Atlas Software covers taxi costs for employees leaving the office after 23:00. [C]",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the key fact from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h19",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The performance bonus is set between 0 and 20 percent of the employee's gross monthly salary and is paid with the February salary [A][C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes all key facts from the reference answer without contradiction.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h20",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Promotion decisions are announced only in January, after the December review [B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the key fact from the reference answer (January) and adds non-contradictory details about the timing relative to December.",
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h21",
+   "type": "fact",
+   "retrieval": {
+    "rank": 3,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The notice period for an Atlas Software employee with more than three years of service is 8 weeks [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 8-week notice period without adding or omitting key facts from the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "h22",
+   "type": "fact",
+   "retrieval": {
+    "rank": 3,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The email address of the Atlas Software Human Resources department is hr@atlassoftware.example [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer exactly matches the reference answer without adding or omitting any key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The monthly rent is 32,500 TL and is due by the 5th of each month [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states both the rent amount and due date as specified in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Under the Bostanli lease, if the rent is paid late, a late fee of five per thousand of the monthly rent is charged for each day of delay [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately restates all key facts from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The apartment rented by Elif Kaya is located in the Bostanli neighborhood of the Karsiyaka district of Izmir, and it is 125 square meters in size [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the location and size of the apartment as specified in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The Bostanli lease starts on September 1, 2026 and lasts one year [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately replicates all key facts from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l05",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The deposit is 65,000 TL and is returned within 30 days of moving out, provided that the premises are handed over undamaged at the end of the agreement and all debts have been paid [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes all key facts from the reference answer (65,000 TL deposit and 30-day return period) without contradiction, and adds non-conflicting conditions.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l06",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Yes, the tenant can keep a cat in the Bostanli apartment [A].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer contradicts the reference answer by stating the tenant can keep a cat, while the reference clearly states pets are not allowed.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l07",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Next year's rent hike for the Bostanli apartment will be determined by increasing the rent by the twelve-month average of the consumer price index (CPI) for the previous lease year. The increase rate may not exceed legal limits [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the CPI-based rent hike method from the reference and adds non-contradictory legal limit information.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l08",
+   "type": "fact",
+   "retrieval": {
+    "rank": 3,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The building maintenance fee is paid by the landlord under the Bostanli lease [A].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer incorrectly states the landlord pays, whereas the reference answer明确 states the tenant is responsible.",
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "l09",
+   "type": "fact",
+   "retrieval": {
+    "rank": 3,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The tenant must give the landlord written notice at least 1 month in advance to terminate the Bostanli lease [B].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer states a different notice period (1 month vs. the reference's 2 months) and thus omits a key fact.",
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The Nimbus Backup Professional plan supports up to 25 devices [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The answer correctly states the key fact about supporting up to 25 devices, which matches the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "No, Nimbus Backup does not support backup for mobile devices [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states that Nimbus Backup does not support mobile devices, matching the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The Nimbus Backup backups are stored in data centers in Frankfurt and Amsterdam [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the data centers (Frankfurt and Amsterdam) mentioned in the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "A Nimbus Backup pairing code is valid for 24 hours after it is generated [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 24-hour validity period without contradiction.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b05",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "A red agent icon means that no successful backup has been taken in the last 72 hours [B].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the key fact from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b06",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The most frequent backup setting in the Nimbus Backup Starter plan is once an hour [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the most frequent backup setting as \"once an hour,\" matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b07",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The maximum size of a single file that can be backed up with Nimbus Backup is 50 GB [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the maximum file size of 50 GB as per the reference answer, with no contradictory or missing key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b08",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Older versions of files are kept for 90 days in the Professional plan [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 90-day retention period for the Professional plan, matching the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b09",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The data remains available for download for 14 days from the cancellation date [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 14-day period specified in the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "b10",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The customer is given a service credit equal to 10 percent of that month's subscription fee. The service credit is not paid out in cash and is deducted from the next invoice [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 10% service credit without contradicting the reference answer, even though it adds non-contradictory details about the credit's application.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "m01",
+   "type": "multi",
+   "retrieval": {
+    "rank": 1,
+    "found": 2,
+    "expected": 2
+   },
+   "generation": {
+    "answer": "The training budget per person at Atlas Software is 15,000 TL per year. For a training that costs more than 10,000 TL, the employee commits to working at the company for at least 12 months after the training ends [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes all key facts from the reference answer without contradictions or omissions.",
+    "citations": {
+     "rank": 1,
+     "found": 2,
+     "expected": 2
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "m02",
+   "type": "multi",
+   "retrieval": {
+    "rank": 1,
+    "found": 2,
+    "expected": 2
+   },
+   "generation": {
+    "answer": "When an employee marries, they are granted 5 working days of paid leave [A]. The documents do not contain this information.",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer omits the key detail about adding the spouse to health insurance within 30 days of reporting the marriage.",
+    "citations": {
+     "rank": 1,
+     "found": 2,
+     "expected": 2
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "m03",
+   "type": "multi",
+   "retrieval": {
+    "rank": 1,
+    "found": 2,
+    "expected": 2
+   },
+   "generation": {
+    "answer": "The Nimbus Starter plan offers 500 GB of storage and keeps older file versions for 30 days [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states both the 500 GB storage and 30-day retention period without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 2
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u01",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "The documents do not contain this information.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u02",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "The documents do not contain this information.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u03",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "The phone number of the landlord of the Bostanli apartment is not provided in the documents. The documents do not contain this information.",
+    "correct": false,
+    "refused": false,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u04",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "The monthly price of the Nimbus Backup Professional plan is not specified in the documents. [B]",
+    "correct": false,
+    "refused": false,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u05",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "Atlas Software employees are entitled to 10 working days of paid sick leave per year [A].",
+    "correct": false,
+    "refused": false,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u06",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "The documents do not contain this information.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "o01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "20 working days [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the exact number of working days mentioned in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "o02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Approved overtime is paid at the hourly wage plus twenty-five percent [A]. If the employee chooses, they may take one and a half hours of time off for each hour worked instead of receiving overtime pay [C].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer incorrectly states that time off in lieu is offered, which contradicts the reference answer that explicitly says it is not.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "o03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Yes, up to 10 days of unused annual leave may be carried over to the next year; carried-over days are forfeited if they are not used by April 30 [A]. However, another source states that up to 5 days of unused annual leave may be carried over to the next year; carried-over days are forfeited if they are not used by March 31 [C]. Additionally, another source mentions that up to 5 days of unused annual leave may be carried over to the next year; carried-over days are forfeited if they are not used by March 31 [D].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer introduces conflicting information (5 days, March 31) not present in the reference answer, which specifies 10 days and April 30.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "o04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Orion Logistics employees are entitled to 10 working days of paid sick leave per year [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 10 working days of paid sick leave as per the reference answer without adding contradictory information.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "o05",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Orion Logistics employees cannot work remotely from abroad [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the prohibition on remote work abroad as specified in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "o06",
+   "type": "fact",
+   "retrieval": {
+    "rank": 2,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The notice period for an Orion Logistics employee with more than three years of service is 6 weeks [C].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the 6-week notice period as specified in the reference answer.",
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "a01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The monthly rent for the Cankaya apartment is 24,000 TL, and it is due by the 1st of each month [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states both the rent amount (24,000 TL) and the due date (1st of each month) without adding or omitting key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "a02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The landlord pays the building maintenance fee under the Cankaya lease [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly identifies the landlord as the payer of the building maintenance fee under the Cankaya lease, matching the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "a03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The tenant may keep pets on the premises with the written permission of the landlord [A]. However, the tenant may not keep pets on the premises [B]. Therefore, the tenant can keep a cat in the Cankaya apartment only with the written permission of the landlord [A][B].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer incorrectly introduces the contradiction [B] (\"may not keep pets\") which is not present in the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "a04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The phone number of the landlord of the Cankaya apartment is 0312 555 0147 [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly provides the phone number from the reference answer without adding or omitting key facts.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "s01",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Yes, Stratus Sync supports mobile devices. The app runs on iOS and Android [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states that Stratus Sync supports mobile devices and specifies iOS and Android, matching the reference answer.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "s02",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The maximum size of a single file in Stratus Sync is 20 GB [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the maximum file size of 20 GB, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "s03",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Stratus Sync files are stored in data centers in Dublin and Stockholm [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer correctly states the data centers in Dublin and Stockholm, matching the reference answer exactly.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "s04",
+   "type": "fact",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The Stratus Sync Team plan costs 120 TL per user per month [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately repeats the reference answer's key fact about the cost.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "m04",
+   "type": "multi",
+   "retrieval": {
+    "rank": 1,
+    "found": 2,
+    "expected": 2
+   },
+   "generation": {
+    "answer": "Atlas Software Inc. provides 20 working days of paid annual leave for employees in their first three years at the company, while Orion Logistics Ltd. provides 20 working days of paid annual leave for employees in their first three years as well. Both companies offer the same number of annual leave days for new employees. [C][B]",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer incorrectly states both companies offer 20 days for new employees, whereas the reference specifies 18 days at Atlas (first five years) and 20 days at Orion (first three years).",
+    "citations": {
+     "rank": 2,
+     "found": 1,
+     "expected": 2
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "m05",
+   "type": "multi",
+   "retrieval": {
+    "rank": 2,
+    "found": 2,
+    "expected": 2
+   },
+   "generation": {
+    "answer": "In the Bostanli lease, the building maintenance fee is paid by the landlord [A]. In the Cankaya lease, the building maintenance fee is also paid by the landlord [B].",
+    "correct": false,
+    "refused": false,
+    "reason": "The system answer incorrectly states that the landlord pays the building maintenance fee in the Bostanli lease, whereas the reference answer specifies the tenant pays in that case.",
+    "citations": {
+     "rank": 2,
+     "found": 1,
+     "expected": 2
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "k01",
+   "type": "keyword",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "Error code SX-1047 means that sync is paused because the device has been offline for more than 7 days [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states the key fact from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "k02",
+   "type": "keyword",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The file is locked by another application and will be retried in 10 minutes. [A]",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer includes all key facts from the reference answer without contradiction or omission.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "k03",
+   "type": "keyword",
+   "retrieval": {
+    "rank": 1,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The Stratus Sync error SX-3001 means that the team's license has expired; only an administrator can renew it [A].",
+    "correct": true,
+    "refused": false,
+    "reason": "The system answer accurately states all key facts from the reference answer without contradiction.",
+    "citations": {
+     "rank": 1,
+     "found": 1,
+     "expected": 1
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "k04",
+   "type": "keyword",
+   "retrieval": {
+    "rank": 3,
+    "found": 1,
+    "expected": 1
+   },
+   "generation": {
+    "answer": "The documents do not contain this information.",
+    "correct": false,
+    "refused": true,
+    "reason": "refused",
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u07",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "The documents do not contain this information.",
+    "correct": true,
+    "refused": true,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  },
+  {
+   "id": "u08",
+   "type": "unanswerable",
+   "generation": {
+    "answer": "The training budget per person at Orion Logistics is 15,000 TL per year [B].",
+    "correct": false,
+    "refused": false,
+    "citations": {
+     "rank": 0,
+     "found": 0,
+     "expected": 0
+    },
+    "invalid_citations": 0,
+    "judge_failed": false
+   }
+  }
+ ]
+}
