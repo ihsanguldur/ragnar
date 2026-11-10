@@ -20,6 +20,12 @@ type Config struct {
 	ChunkOverlap int     `json:"chunk_overlap"`
 	JudgeModel   string  `json:"judge_model,omitempty"`
 	JudgePrompt  string  `json:"judge_prompt,omitempty"`
+	// GoldenSHA256 and DocsSHA256 identify the question set and the
+	// documents, so a comparison shows when two runs did not answer the same
+	// questions over the same documents. Reports from before they existed
+	// leave them empty.
+	GoldenSHA256 string `json:"golden_sha256,omitempty"`
+	DocsSHA256   string `json:"docs_sha256,omitempty"`
 }
 
 // QuestionReport holds the results of one question. Retrieval is nil for

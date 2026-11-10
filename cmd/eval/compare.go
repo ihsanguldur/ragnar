@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"text/tabwriter"
 	"time"
 
@@ -42,18 +43,31 @@ func runCompare(args []string) error {
 	fmt.Println()
 	tw = tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(tw, "TYPE\tMETRIC\tA\tB\tDELTA")
-	for _, t := range []string{"fact", "multi", "all"} {
+	// The summaries are keyed by type name, plus "all" for retrieval. A type
+	// that is in neither report gets no rows; one that is in only one of
+	// them still shows, with "-" on the other side.
+	keys := make([]string, 0, len(eval.Types)+1)
+	for _, t := range eval.Types {
+		keys = append(keys, string(t))
+	}
+	for _, t := range append(slices.Clone(keys), "all") {
 		ra, okA := a.Retrieval[t]
 		rb, okB := b.Retrieval[t]
+		if !okA && !okB {
+			continue
+		}
 		metricRow(tw, t, "recall", "%.3f", ra.Recall, rb.Recall, okA, okB)
 		metricRow(tw, t, "mrr", "%.3f", ra.MRR, rb.MRR, okA, okB)
 	}
 	// Reading a nil map is safe, so a retrieval-only report simply shows "-"
 	// in its generation column.
 	if a.Generation != nil || b.Generation != nil {
-		for _, t := range []string{"fact", "multi", "unanswerable"} {
+		for _, t := range keys {
 			ga, okA := a.Generation[t]
 			gb, okB := b.Generation[t]
+			if !okA && !okB {
+				continue
+			}
 			metricRow(tw, t, "accuracy", "%.3f", ga.Accuracy, gb.Accuracy, okA, okB)
 			metricRow(tw, t, "refused", "%.3f", ga.Refused, gb.Refused, okA, okB)
 			if ga.CitationQuestions > 0 || gb.CitationQuestions > 0 {

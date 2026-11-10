@@ -17,6 +17,9 @@ const (
 	TypeFact QuestionType = "fact"
 	// TypeMulti questions need two or more places, such as two pages.
 	TypeMulti QuestionType = "multi"
+	// TypeKeyword questions hinge on an exact term, such as an error code or
+	// an article number, which embeddings tell apart poorly.
+	TypeKeyword QuestionType = "keyword"
 	// TypeUnanswerable questions are not answered by the documents; the
 	// model must refuse instead of guessing.
 	TypeUnanswerable QuestionType = "unanswerable"
@@ -39,6 +42,10 @@ type Question struct {
 	Answer   string       `yaml:"answer"`
 	Sources  []Source     `yaml:"sources"`
 }
+
+// Types lists every question type in the order the summary tables show
+// them.
+var Types = []QuestionType{TypeFact, TypeMulti, TypeKeyword, TypeUnanswerable}
 
 // LoadGolden reads and validates the golden set at path. It is strict on
 // purpose: a mistake in hand-written data would otherwise skew the metrics
@@ -72,7 +79,7 @@ func LoadGolden(path string) ([]Question, error) {
 		seen[q.ID] = true
 
 		switch q.Type {
-		case TypeFact, TypeMulti:
+		case TypeFact, TypeMulti, TypeKeyword:
 			if q.Answer == "" || len(q.Sources) == 0 {
 				return nil, fmt.Errorf("eval: question %q: answer and sources are required", q.ID)
 			}
