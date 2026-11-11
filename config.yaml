@@ -29,8 +29,8 @@ ingest:
   extract_timeout: 2m
   # Chunk size and overlap in characters. Changing them only affects
   # documents ingested afterwards.
-  chunk_size: 1600
-  chunk_overlap: 200
+  chunk_size: 800
+  chunk_overlap: 0
   # Chunks sent to the embedding model per request.
   embed_batch_size: 16
   embed_timeout: 1m
